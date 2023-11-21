@@ -1,5 +1,5 @@
 [{"DocumentId":"52201e19-7268-41c4-a32f-23882344cb85","Name":"Mock Data Alpha.pdf","Title":null,"Path":"/","Size":5300000,"Type":"PDF","LastModified":"09/28/2023","IsRestricted":false},
-{"DocumentId":"79b47146-7906-40c9-971e-013aa8d3304d","Name":"Mock Data Beta.pdf","Title":"This is a title for Beta","Path":"/Folder1","Size":1400000,"Type":"PDF","LastModified":"06/17/2023","IsRestricted":false},
+{"DocumentId":"79b47146-7906-40c9-971e-013aa8d3304d","Name":"Mock Data Beta.pdf","Title":"This is a title for Beta","Path":"/Folder1","Size":1400000,"Type":"PDF","LastModified":"06/18/2023","IsRestricted":false},
 {"DocumentId":"1e95026e-0533-4542-98c2-2f7ed2369a6a","Name":"Mock Data Gamma.pdf","Title":"This is a title for Gamma","Path":"/","Size":43289,"Type":"PDF","LastModified":"06/20/2023","IsRestricted":false},
 {"DocumentId":"73873f63-e25c-41fe-b27f-b897fda1d290","Name":"Mock Data Delta.pdf","Title":"This is a title for Delta","Path":"/Folder1","Size":2100000,"Type":"PDF","LastModified":"05/27/2023","IsRestricted":false},
 {"DocumentId":"15a0ca9a-1c68-4045-8696-e3cf52a5cc75","Name":"Mock Data Epsilon.pdf","Title":null,"Path":"/Folder1/Subfolder1","Size":3240000,"Type":"PDF","LastModified":"01/28/2023","IsRestricted":false},
