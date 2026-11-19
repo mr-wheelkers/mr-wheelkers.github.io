@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>godot-pilot documentation</title>
+  <meta name="description" content="Requirements, quick start, concepts, commands, Claude Code integration, privacy and troubleshooting for godot-pilot (GodotPilot).">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect x='1.0' y='5' width='5' height='24' fill='%23F2B416'/%3E%3Crect x='7.6' y='5' width='5' height='24' fill='%232B66D9'/%3E%3Crect x='14.2' y='5' width='5' height='24' fill='%23C92A74'/%3E%3Crect x='20.8' y='5' width='5' height='24' fill='%230B7A6F'/%3E%3Crect x='27.4' y='5' width='5' height='24' fill='%23E8692F'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body data-tool="godot-pilot">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="../../"><svg class="rack" viewBox="0 0 34 22" aria-hidden="true" focusable="false"><rect x="1.0" y="12" width="5" height="9" fill="#F2B416"/><rect x="7.6" y="12" width="5" height="9" fill="#2B66D9"/><rect x="14.2" y="12" width="5" height="9" fill="#C92A74"/><rect x="20.8" y="1" width="5" height="20" fill="#0B7A6F"/><rect x="27.4" y="12" width="5" height="9" fill="#E8692F"/></svg><span>mr-wheelkers tools</span></a>
+      <nav class="site-nav" aria-label="Site">
+        <ul>
+        <li data-tool="daleq"><a href="../../daleq/">daleq</a></li>
+        <li data-tool="drawingboard"><a href="../../drawingboard/">drawingboard</a></li>
+        <li data-tool="imgcompare"><a href="../../imgcompare/">imgcompare</a></li>
+        <li data-tool="godot-pilot"><a href="../../godot-pilot/">godot-pilot</a></li>
+        <li data-tool="simq"><a href="../../simq/">simq</a></li>
+        <li class="docs-link"><a href="../../docs/" aria-current="page">Docs</a></li>
+        </ul>
+      </nav>
+      <button class="theme-btn" type="button" hidden>Dark theme</button>
+    </div>
+  </header>
+
+  <div class="wrap docs">
+    <aside class="docs-side">
+      <nav aria-label="On this page">
+        <p class="side-title">On this page</p>
+        <ul>
+            <li><a href="#install">Install</a></li>
+            <li><a href="#quick-start">Quick start</a></li>
+            <li><a href="#concepts">Concepts</a></li>
+            <li><a href="#commands">Command reference</a></li>
+            <li><a href="#claude-code">Claude Code integration</a></li>
+            <li><a href="#security">Security and privacy</a></li>
+            <li><a href="#troubleshooting">Troubleshooting</a></li>
+        </ul>
+      </nav>
+      <nav class="others" aria-label="Documentation for each tool">
+        <p class="side-title">Documentation</p>
+        <ul>
+            <li data-tool="daleq"><a href="../daleq/">daleq</a></li>
+            <li data-tool="drawingboard"><a href="../drawingboard/">drawingboard</a></li>
+            <li data-tool="imgcompare"><a href="../imgcompare/">imgcompare</a></li>
+            <li data-tool="godot-pilot"><a href="../godot-pilot/" aria-current="page">godot-pilot</a></li>
+            <li data-tool="simq"><a href="../simq/">simq</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main id="main" class="docs-main">
+      <h1>godot-pilot documentation</h1>
+      <p class="lede">GodotPilot gives Claude hands and eyes on a Godot 4.7.2 .NET project in development: the running game, the editor, and the project's configuration. It stays out of exported builds. macOS and C# only. Jev (TypeSafe AI) is its optional, paid fast eyes and classifier.</p>
+      <p class="status-line"><span class="badge" data-status="godot-pilot">Not public yet</span> <a href="../../godot-pilot/">About godot-pilot</a> <a data-repo="godot-pilot" href="#" hidden>Source on GitHub</a></p>
+        <section aria-labelledby="install">
+          <h2 id="install"><a href="#install">Install</a></h2>
+          <p class="private-note" data-private="godot-pilot"><strong>Not public yet.</strong> The repository is private today, so there is nothing to check out yet. This is how it will work once it is public.</p>
+          <h3>What you need</h3>
+          <ul>
+            <li>macOS. It is built and verified on an Apple Silicon Mac; Windows and Linux are the design target, not yet verified.</li>
+            <li>Godot 4.7.2 .NET. The harness is C# and needs a .NET game assembly, so GDScript projects are out of scope.</li>
+            <li>netcoredbg, only for breakpoints (<code>pilot debug</code>).</li>
+            <li>Optional: a <code>TYPESAFE_API_KEY</code> in the environment for Jev. Jev is paid.</li>
+          </ul>
+          <h3>Adopt it in a project</h3>
+          <p>There is no packaged installer or plugin yet. The <code>pilot</code> CLI is run from a checkout of the repository, and another Godot .NET project adopts it with <code>pilot init</code>:</p>
+          <div class="cmd"><pre><code>pilot init --project &lt;dir&gt;</code></pre></div>
+          <p>It links the addon, adds a csproj block against prebuilt assemblies, sets the export filter, and writes <code>.gitignore</code> lines and <code>.pilot/config.json</code> when missing. The steps print one line each, then <code>pilot doctor</code> runs. Add <code>--also &lt;logic.csproj&gt;</code> for a plain-logic assembly.</p>
+          <ul>
+            <li>Afterwards <code>git status</code> of the project shows only the csproj block, the export filters, <code>.gitignore</code> and <code>.pilot/config.json</code>.</li>
+            <li>A second <code>init</code> changes nothing. Re-run it after any protocol or analyzer change; <code>pilot doctor</code> says when.</li>
+            <li><code>pilot init --remove</code> takes it all out again.</li>
+            <li>Before any export, run <code>scripts/release-gate.sh --project &lt;dir/game&gt;</code>.</li>
+          </ul>
+        </section>
+        <section aria-labelledby="quick-start">
+          <h2 id="quick-start"><a href="#quick-start">Quick start</a></h2>
+          <h3>Drive a running game</h3>
+          <figure class="term">
+            <figcaption class="bar"><span>a session</span></figcaption>
+            <pre><code><span class="c">pilot run --scene Room</span>
+<span class="c">pilot step 5</span>
+<span class="c">pilot get &lt;path&gt;</span>
+<span class="c">pilot click "Start"</span>
+<span class="c">pilot eval "GetTree().CurrentScene.Name"</span>
+<span class="c">pilot shot</span>
+<span class="c">pilot stop</span></code></pre>
+          </figure>
+          <p>Success prints nothing unless the command's purpose is output: <code>get</code> prints the value as JSON, and <code>shot</code> prints the PNG path and its sha256.</p>
+          <h3>Run a scenario</h3>
+          <div class="cmd"><pre><code>pilot scenario run demo/scenarios/&lt;name&gt;.json</code></pre></div>
+          <p>The CLI launches the game with the standard line, loads the fixture, executes the steps and stops the game. Success is exit 0 and no output. A failure is non-zero and at most 10 lines naming the failed step and the bundle path.</p>
+          <h3>Edit in the editor, verify in the played game</h3>
+          <figure class="term">
+            <figcaption class="bar"><span>an editor session</span></figcaption>
+            <pre><code><span class="c">pilot editor open</span>
+<span class="c">pilot editor scene open res://scenes/Room.tscn</span>
+<span class="c">pilot editor select Door</span>
+<span class="c">pilot editor set Door color '{"r":1,"g":0,"b":0,"a":1}'</span>
+<span class="c">pilot editor scene save</span>
+<span class="c">pilot editor play --main</span>
+<span class="c">pilot step 5</span>
+<span class="c">pilot editor stop</span>
+<span class="c">pilot editor close</span></code></pre>
+          </figure>
+        </section>
+        <section aria-labelledby="concepts">
+          <h2 id="concepts"><a href="#concepts">Concepts</a></h2>
+          <h3>Tiers: push every bug to the cheapest one that catches it</h3>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Tier / Time / What / Catches">
+            <table class="cols-many">
+              <thead><tr><th scope="col">Tier</th><th scope="col">Time</th><th scope="col">What</th><th scope="col">Catches</th></tr></thead>
+              <tbody>
+              <tr><td data-label="Tier">0</td><td data-label="Time">&lt;1s</td><td data-label="What">Roslyn analyzers, xUnit on pure logic</td><td data-label="Catches">rules, math, state machines, wiring</td></tr>
+              <tr><td data-label="Tier">1</td><td data-label="Time">seconds</td><td data-label="What">GdUnit4 headless, no rendering</td><td data-label="Catches">scene, physics, signal logic</td></tr>
+              <tr><td data-label="Tier">2</td><td data-label="Time">~10s</td><td data-label="What">rendered scenario run via harness, frame-stepped</td><td data-label="Catches">integration, UI, visuals</td></tr>
+              <tr><td data-label="Tier">3</td><td data-label="Time">minutes</td><td data-label="What">exploratory Jev-watched runs</td><td data-label="Catches">stuck states, soft-locks, oddities</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>A bug found in tier 2 or 3 gets a tier 0 or 1 reproduction test before the fix. Game logic lives in plain .NET classes, not <code>Node</code> subclasses; nodes are thin adapters.</p>
+          <h3>Verification order</h3>
+          <ol>
+            <li>Engine or editor state (harness <code>get</code>/<code>eval</code>, editor read-back). If it answers the question, ask nothing else.</li>
+            <li>Jev, only for what state cannot answer ("is a dialog open", "does this look broken").</li>
+          </ol>
+          <h3>Determinism</h3>
+          <p>Runs use a fixed timestep (<code>--fixed-fps 60</code>), a seeded RNG and an injectable clock. A flaky test is a bug. A frame hash is only deterministic under frame stepping and on the same renderer, GPU/driver and resolution: hashes taken on one machine are not expected to hold on another.</p>
+          <h3>Fixtures, scenarios and recordings</h3>
+          <p>A fixture is a scene plus state, applied after the scene's <code>_Ready</code> and before its first tick. Reaching a state is always a fixture, never a click-through. A scenario is a JSON file of steps; each scenario runs in a fresh game process.</p>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Step op / What it does">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Step <code>op</code></th><th scope="col">What it does</th></tr></thead>
+              <tbody>
+              <tr><td data-label="Step op"><code>load</code></td><td data-label="What it does">load a scene, optionally with a fixture, seed and clock</td></tr>
+              <tr><td data-label="Step op"><code>input</code></td><td data-label="What it does">click, move, drag, scroll, key, text or action</td></tr>
+              <tr><td data-label="Step op"><code>step</code></td><td data-label="What it does">advance N frames; <code>expectSha</code> asserts the frame hash</td></tr>
+              <tr><td data-label="Step op"><code>set</code></td><td data-label="What it does">set a state value and read it back</td></tr>
+              <tr><td data-label="Step op"><code>wait</code></td><td data-label="What it does">poll until a value equals, a node is visible or the tree changed, within a frame budget</td></tr>
+              <tr><td data-label="Step op"><code>assert</code></td><td data-label="What it does">deep JSON equality on a value, a regex on a string, or a node visible or hidden</td></tr>
+              <tr><td data-label="Step op"><code>shot</code></td><td data-label="What it does">take a screenshot; <code>expectSha</code> asserts its sha256</td></tr>
+              <tr><td data-label="Step op"><code>jev</code></td><td data-label="What it does">a Jev check; with Jev off the step is <code>skipped</code></td></tr>
+              <tr><td data-label="Step op"><code>checkpoint</code></td><td data-label="What it does">hash a list of state paths; a mismatch on replay is a desync</td></tr>
+              <tr><td data-label="Step op"><code>eval</code></td><td data-label="What it does">run C# and optionally compare the result</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p><code>pilot scenario record</code> starts a run in record mode: every input and step the CLI sends is appended to a scenario file, with a <code>checkpoint</code> step every 60 game frames. <code>pilot scenario replay</code> runs it and reports the first checkpoint mismatch. Recording covers CLI-driven input only, not human play.</p>
+          <h3>Runs</h3>
+          <p>Each run has a folder, <code>.pilot/runs/&lt;run-id&gt;/</code>, with a manifest, a trace, shots, logs and, on failure, a bundle: the shot at the failed step, the tree, the tree diff against the previous step, logs, and inputs since the last checkpoint. A passing run keeps only the manifest and trace by default.</p>
+          <p>Two runs in one project dir are not supported, by design. Each run writes the project's <code>override.cfg</code>, and the CLI refuses a second one. An editor session is not a run and coexists with one.</p>
+          <h3>Background launches and "verified"</h3>
+          <p>On macOS every game launch and <code>pilot editor open</code> start Godot in the background by default, so they do not take your keyboard focus. <code>--focus</code> opts out. A result from a background run never counts as tested on its own: <code>scenario run</code> marks it <code>verified: false</code>, and a foreground run confirms it.</p>
+          <h3>The editor</h3>
+          <p><code>pilot editor</code> drives a Godot editor through the editor harness: UI tree, input, editor API calls, live eval and editor logs. Editor work is not deterministic and is not a tier; every command that acts reads its effect back before it reports success.</p>
+          <h3>Analyzers</h3>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Id / Reported / Why">
+            <table class="cols-many">
+              <thead><tr><th scope="col">Id</th><th scope="col">Reported</th><th scope="col">Why</th></tr></thead>
+              <tbody>
+              <tr><td data-label="Id">GP0001</td><td data-label="Reported"><code>GetNode</code> with a path made from a string</td><td data-label="Why">Renaming or moving a node silently breaks a string path at run time.</td></tr>
+              <tr><td data-label="Id">GP0003</td><td data-label="Reported">A constant string converted to <code>StringName</code> or <code>NodePath</code> inside <code>_Process</code> and similar overrides</td><td data-label="Why">The conversion allocates and hashes on every call, 60+ times a second.</td></tr>
+              <tr><td data-label="Id">GP0004</td><td data-label="Reported">An event <code>+=</code> in <code>_Ready</code>/<code>_EnterTree</code> with no <code>-=</code> in <code>_ExitTree</code></td><td data-label="Why">A publisher that outlives the node keeps calling a freed node.</td></tr>
+              <tr><td data-label="Id">GP0006</td><td data-label="Reported">Scene-tree access in a Node's constructor or field initializer</td><td data-label="Why">Constructors run before the node is in the tree.</td></tr>
+              <tr><td data-label="Id">GP0008</td><td data-label="Reported"><code>async void</code> in a Node subclass, outside overrides and handlers</td><td data-label="Why">Exceptions escape to the engine and the caller cannot await it.</td></tr>
+              <tr><td data-label="Id">GP0009</td><td data-label="Reported"><code>Task.Wait</code>, <code>.Result</code>, <code>Thread.Sleep</code> in a Node subclass</td><td data-label="Why">Blocks the main thread and stalls frame stepping.</td></tr>
+              <tr><td data-label="Id">GP0013</td><td data-label="Reported"><code>DateTime.Now</code>, <code>Random.Shared</code>, <code>GD.Randf</code> and other wall-clock or unseeded sources</td><td data-label="Why">Runs must be deterministic.</td></tr>
+              <tr><td data-label="Id">GP0015</td><td data-label="Reported">Any Godot type in an assembly built with <code>GodotPilotLogicAssembly=true</code></td><td data-label="Why">Game logic lives in plain .NET classes so it gets tier-0 tests.</td></tr>
+              <tr><td data-label="Id">GP0021</td><td data-label="Reported">Editor classes and <code>EditorInterface</code> outside <code>#if TOOLS</code></td><td data-label="Why">Editor classes do not exist in an exported game.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>A violation fails <code>dotnet build -warnaserror</code>. Fix findings rather than suppress them; <code>[GodotPilot.AllowNondeterminism]</code> marks the clock and RNG adapters that may read the system.</p>
+        </section>
+        <section aria-labelledby="commands">
+          <h2 id="commands"><a href="#commands">Command reference</a></h2>
+          <p>Global flags: <code>--json</code>, <code>--verbose</code>, <code>--run &lt;id&gt;</code>, <code>--config &lt;path&gt;</code>, <code>--timeout &lt;sec&gt;</code>. <code>--json</code> prints exactly one JSON object. <code>--verbose</code> streams the trace to stderr.</p>
+          <h3>Session</h3>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Command / Does">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Command</th><th scope="col">Does</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot run [--scene &lt;Name|res://…&gt;] [--seed N] [--clock ISO] [--fixture &lt;file&gt;] [--size WxH] [--headless] [--no-build] [--focus]</code></td><td data-label="Does">build, launch, connect, apply the fixture</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot attach &lt;run-id&gt;</code></td><td data-label="Does">reconnect using the manifest</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot stop [--code N]</code></td><td data-label="Does">quit, wait for exit, clean up</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot status</code></td><td data-label="Does">current run, pid alive, game frame</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Game</h3>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Command / Does">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Command</th><th scope="col">Does</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot step [N=1] [--hash]</code></td><td data-label="Does">advance N frames</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot shot [--name X] [--no-png]</code></td><td data-label="Does">take a screenshot; prints <code>&lt;png path&gt; &lt;sha256&gt;</code></td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot click &lt;x&gt;,&lt;y&gt; [--button left] [--then-step 1]</code></td><td data-label="Does">click a window coordinate</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot click "&lt;text&gt;" [--jev] [--expect &lt;path&gt;=&lt;value&gt;] [--then-step 1]</code></td><td data-label="Does">click a visible Button or Label by its text</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot drag &lt;x1&gt; &lt;y1&gt; &lt;x2&gt; &lt;y2&gt; [--frames 10]</code></td><td data-label="Does">drag</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot scroll &lt;x&gt;,&lt;y&gt; &lt;direction&gt; [--clicks 1] [--then-step 0]</code></td><td data-label="Does">scroll up, down, left or right</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot resize &lt;W&gt;x&lt;H&gt;</code></td><td data-label="Does">resize the window</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot key &lt;Key&gt; [--down|--up|--press(default)] [--text "&lt;string&gt;"] [--then-step N]</code></td><td data-label="Does">press a key or type a string</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot action &lt;name&gt; [--down|--up|--press]</code></td><td data-label="Does">press an input action</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot get &lt;path&gt;</code></td><td data-label="Does">read a state value as JSON</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot set &lt;path&gt; &lt;json-value&gt;</code></td><td data-label="Does">set a state value</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot tree [--root /root] [--depth 8] [--controls] [--diff &lt;prev.json&gt;]</code></td><td data-label="Does">the scene tree, one node per line</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot eval "&lt;code&gt;"</code></td><td data-label="Does">run C# in the game at the next frame boundary</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot logs [--since N] [--level error]</code></td><td data-label="Does">harness log lines</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot load &lt;Scene|res://…&gt; [--fixture &lt;file&gt;] [--seed N] [--clock ISO]</code></td><td data-label="Does">load a scene</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p><code>pilot wait (--get &lt;path&gt; --equals &lt;json&gt; | --visible &lt;node-path&gt; | --tree-changed | --jev "&lt;condition&gt;") [--frames 300] [--poll 10]</code> polls by stepping frames. On a timeout it prints the last value and exits 1.</p>
+          <h3>Scenarios</h3>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Command / Does">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Command</th><th scope="col">Does</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot scenario run &lt;file…&gt; [--twice] [--allow-skip] [--focus] [--retain on-failure|all]</code></td><td data-label="Does">run each scenario in a fresh game process</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot scenario record --scene &lt;S&gt; [--fixture F] [--seed N] [--checkpoint-every 60] [--size WxH] [--focus] --out &lt;file&gt;</code></td><td data-label="Does">record CLI-driven input into a scenario until <code>pilot scenario record --finish</code></td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot scenario replay &lt;file&gt; [--times 5] [--focus] [--retain on-failure|all]</code></td><td data-label="Does">run and compare checkpoint hashes</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Editor</h3>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Command / Does">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Command</th><th scope="col">Does</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor open [--headless] [--no-build] [--focus]</code></td><td data-label="Does">build, launch the editor, connect</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor close [--save]</code></td><td data-label="Does">quit the editor; unsaved scenes are exit 1, naming them</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor status</code></td><td data-label="Does">the session, the edited scene, playing or stopped</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor tree [--find &lt;text&gt;] [--type &lt;Class&gt;] [--depth N]</code></td><td data-label="Does">the editor's UI, one control per line</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor click &lt;x&gt;,&lt;y&gt; | "&lt;text&gt;" [--button left]</code></td><td data-label="Does">click in the editor</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor key &lt;Key&gt; [--mod ctrl,shift]</code>, <code>pilot editor type "&lt;text&gt;"</code></td><td data-label="Does">keyboard input</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor scene open|save-as|reload &lt;res://….tscn&gt;</code></td><td data-label="Does">scene files; also <code>scene save|save-all</code></td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor select &lt;path&gt;…</code></td><td data-label="Does">select nodes</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor get &lt;path&gt; &lt;property&gt;</code></td><td data-label="Does">read a node property</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor set &lt;path&gt; &lt;property&gt; &lt;json&gt;</code></td><td data-label="Does">set a node property and read it back</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor play [&lt;scene&gt;|--main|--current] [--seed N] [--clock ISO] [--size WxH]</code></td><td data-label="Does">play the game from the editor with the game harness attached</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor stop</code></td><td data-label="Does">stop the played game</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor reimport &lt;res://…&gt;…</code>, <code>pilot editor scan</code></td><td data-label="Does">reimport and rescan</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor logs [--since N] [--level error]</code></td><td data-label="Does">editor log lines</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot editor eval "&lt;code&gt;"</code></td><td data-label="Does">run C# against the editor's API</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Project, settings and shaders</h3>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Command / Does">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Command</th><th scope="col">Does</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot doctor [--project &lt;dir&gt;]</code></td><td data-label="Does">the sanity checks; nothing when clean, one line per finding</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot settings get &lt;key&gt; [--scope project|export|import|editor] [--project &lt;dir&gt;]</code></td><td data-label="Does">read a setting</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot settings set &lt;key&gt; &lt;value&gt; [--scope …] [--project &lt;dir&gt;]</code></td><td data-label="Does">change a setting; the sanity checks run before and after</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot settings list [&lt;prefix&gt;] [--scope project|export|import] [--project &lt;dir&gt;]</code></td><td data-label="Does">every key of the scope's file</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot plugin list [--project &lt;dir&gt;]</code></td><td data-label="Does">the plugins under <code>addons/</code></td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot plugin add &lt;dir&gt; [--name &lt;n&gt;] [--enable] [--project &lt;dir&gt;]</code></td><td data-label="Does">copy a local directory into <code>addons/</code></td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot plugin enable|disable &lt;name&gt; [--project &lt;dir&gt;]</code></td><td data-label="Does">enable or disable a plugin</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot plugin remove &lt;name&gt; [--project &lt;dir&gt;]</code></td><td data-label="Does">disable, then delete it</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot shader check &lt;file&gt; [--no-build]</code></td><td data-label="Does">compile a <code>.gdshader</code>; errors as <code>file:line: message</code></td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot shader params &lt;file&gt; [--no-build]</code></td><td data-label="Does">the shader's uniforms</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot shader render &lt;file&gt; [--mesh quad|sphere|box|plane] [--param &lt;name&gt;=&lt;json&gt;]… [--size WxH] [--frames N] [--name X] [--expect-sha &lt;hex&gt;] [--no-build]</code></td><td data-label="Does">render it; prints the PNG path and sha256</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot init [--project &lt;dir&gt;] [--pilot-root &lt;dir&gt;] [--copy] [--also &lt;csproj&gt;]… [--dry-run]</code></td><td data-label="Does">adopt a Godot .NET project</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot init --remove [--project &lt;dir&gt;] [--dry-run]</code></td><td data-label="Does">put every file init changed back</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Jev (optional)</h3>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Command / Does">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Command</th><th scope="col">Does</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot check "&lt;claim&gt;"</code></td><td data-label="Does">a yes or no question about the latest shot</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot locate "&lt;target&gt;"</code></td><td data-label="Does">find a click point</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot classify --options a,b,c</code></td><td data-label="Does">choose one option</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>pilot score "&lt;rubric&gt;" --levels "l1,l2,l3"</code></td><td data-label="Does">score against a rubric</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Debugger and housekeeping</h3>
+          <p><code>pilot debug attach</code>, <code>pilot debug bp &lt;file&gt;:&lt;line&gt;</code>, <code>pilot debug continue</code>, <code>pilot debug bt</code>, <code>pilot debug locals</code> and <code>pilot debug detach</code> drive netcoredbg. The debugger is frozen: kept working, no new work.</p>
+          <p><code>pilot clean &lt;run-id&gt;</code>, <code>pilot clean --older-than &lt;age&gt;</code> and <code>pilot clean --all</code> delete runs. <code>pilot config [--json]</code> prints the effective configuration with sources.</p>
+          <h3>Exit codes</h3>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Code / Meaning">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Code</th><th scope="col">Meaning</th></tr></thead>
+              <tbody>
+              <tr><td data-label="Code">0</td><td data-label="Meaning">ok</td></tr>
+              <tr><td data-label="Code">1</td><td data-label="Meaning">a check failed: assert, replay desync, <code>wait</code> timeout, scenario step failure</td></tr>
+              <tr><td data-label="Code">2</td><td data-label="Meaning">usage or config error (unknown command, bad flag, invalid scenario file, missing fixture)</td></tr>
+              <tr><td data-label="Code">3</td><td data-label="Meaning">harness unreachable: launch failed, connect or request timeout, protocol error, game exited</td></tr>
+              <tr><td data-label="Code">4</td><td data-label="Meaning">budget exceeded (Jev $ or request cap)</td></tr>
+              <tr><td data-label="Code">5</td><td data-label="Meaning">escalation: Jev uncertain or not found, or a failure that produced a bundle for Claude</td></tr>
+              <tr><td data-label="Code">6</td><td data-label="Meaning">skipped: the command needed Jev and Jev is disabled; never a pass</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Configuration</h3>
+          <p>Precedence: built-in defaults, then <code>.pilot/config.json</code> (repo root, committed), then environment <code>GODOT_PILOT_&lt;SECTION&gt;_&lt;KEY&gt;</code>, then flags. Secrets come only from the environment (<code>TYPESAFE_API_KEY</code>).</p>
+        </section>
+        <section aria-labelledby="claude-code">
+          <h2 id="claude-code"><a href="#claude-code">Claude Code integration</a></h2>
+          <p>Claude Code uses GodotPilot through the <code>pilot</code> CLI in its shell. There is no MCP server: the CLI is the one interface. The contract is written for an agent:</p>
+          <ul>
+            <li><strong>Failures and diffs only.</strong> Success prints nothing unless the command's purpose is output. Full logs come on request with <code>--verbose</code>.</li>
+            <li><strong>Every command that acts verifies</strong> through engine state before it reports success.</li>
+            <li><strong>Every engine invocation is bounded</strong>: a timeout on the process, and <code>--quit-after</code> as a last resort.</li>
+            <li><strong>One bundle on failure</strong>: screenshot, Jev scores, scene-tree diff, recent logs.</li>
+            <li><strong>Exit codes carry the outcome</strong>, so an agent can branch without parsing prose.</li>
+          </ul>
+          <h3>Roles</h3>
+          <ul>
+            <li><strong>Claude</strong>: plan, code, test design, debugging, triage of escalations. The driver.</li>
+            <li><strong>The harnesses</strong>: deterministic execution in the game; a free-running executor in the editor.</li>
+            <li><strong>Jev</strong>, when enabled: fast eyes and classifier. It never acts on its own.</li>
+            <li><strong>You</strong>: feel, priorities, anything subjective.</li>
+          </ul>
+          <h3>Analyzers in the build</h3>
+          <p>The analyzers run at tier 0, in <code>dotnet build</code>, so the agent meets a Godot pitfall as a build error with a rule id rather than as a bug at run time. <code>pilot init</code> wires the prebuilt analyzer assembly into the project's csproj.</p>
+        </section>
+        <section aria-labelledby="security">
+          <h2 id="security"><a href="#security">Security and privacy</a></h2>
+          <h3>What leaves the machine</h3>
+          <p>Only screenshots of seeded game content, sent to Jev, and only when Jev is enabled. The game harness marks seeded frames <code>seeded=true</code>, only in a project whose <code>.pilot/config.json</code> sets <code>harness.seededContent</code>; the Jev client refuses any image without the marker. Editor screenshots never carry it, so they cannot be sent. No source code, logs, state dumps, settings or editor content is sent to Jev.</p>
+          <p>GodotPilot treats anything sent to Jev as retained indefinitely, which is why only seeded content is sent. Data already sent to Jev cannot be deleted by GodotPilot.</p>
+          <h3>Jev is optional and paid</h3>
+          <p>With <code>jev.enabled=false</code> or no <code>TYPESAFE_API_KEY</code>, Jev commands and <code>jev</code> scenario steps report <code>skipped: Jev disabled</code> and exit 6; they never pass. A run has a spending cap and a request cap (<code>budgetUsd</code>, <code>requestCap</code> in the configuration). <code>TYPESAFE_API_KEY</code> comes only from the environment: never logged, never in a run dir, never passed to a child process.</p>
+          <h3>Local access</h3>
+          <ul>
+            <li>Harness ports are bound to localhost only, with a per-session token. Tokens are per-run random values in 0600 files.</li>
+            <li><code>pilot eval</code> and <code>pilot editor eval</code> run C# inside the running game and the editor. That is the point of the tool, and it is as powerful as it sounds.</li>
+            <li>There is no sandbox. Claude Code, builds, NuGet packages, the game and the editor run as your own user.</li>
+          </ul>
+          <h3>Nothing ships</h3>
+          <p>The harness compiles only under <code>GODOT_PILOT</code>, editor-side code also sits inside <code>#if TOOLS</code>, and neither the autoload nor the plugin is ever in a committed <code>project.godot</code>. The harness run settings live in <code>.pilot/config.json</code> and are written per run into <code>override.cfg</code>, which an export does not carry. The release gate proves it, for any project.</p>
+          <h3>What is stored locally</h3>
+          <p><code>.pilot/runs/&lt;run-id&gt;/</code>, the Jev cache <code>.pilot/jev-cache/</code>, and <code>.pilot/editor/&lt;id&gt;/</code> for editor sessions. They are kept until deleted. <code>pilot clean</code> does not touch <code>.pilot/editor/</code> yet: delete those directories by hand.</p>
+        </section>
+        <section aria-labelledby="troubleshooting">
+          <h2 id="troubleshooting"><a href="#troubleshooting">Troubleshooting</a></h2>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Symptom / What to do">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Symptom</th><th scope="col">What to do</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Symptom">Exit 3</td><td data-label="What to do">The harness is unreachable: the launch failed, a connect or request timed out, or the game exited. Start a new run.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">Exit 2 naming an <code>override.cfg</code></td><td data-label="What to do">Another run owns this project dir. <code>pilot stop --run &lt;id&gt;</code> first, or use another project dir.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>WARN scenario run unverified (background only)</code></td><td data-label="What to do">Every run launched in the background. A foreground run (<code>--focus</code> or <code>GODOT_PILOT_LAUNCH_TAKEFOCUS=1</code>) confirms them.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>eval hung the game; restart it</code></td><td data-label="What to do">The eval watchdog ended the game. Start a new run.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>restart the game before the next eval</code></td><td data-label="What to do">An eval timed out in this game; every later eval is refused until a restart.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">Exit 6, <code>skipped: Jev disabled</code></td><td data-label="What to do">The command needed Jev. Enable it, or pass <code>--allow-skip</code> where it is offered.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>shot</code> is unavailable</td><td data-label="What to do">Headless (<code>--headless</code>) runs have no pixels.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>no editor session: start one with pilot editor open</code></td><td data-label="What to do">Editor commands act on an open session. Run <code>pilot editor open</code> first.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>pilot editor close</code> exits 1</td><td data-label="What to do">Scenes are unsaved; it names them. Save, or pass <code>--save</code>.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>CS8032</code> or <code>CS9057</code> in the build output</td><td data-label="What to do">The analyzers did not load.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">After any settings or plugin change</td><td data-label="What to do">Run <code>pilot doctor</code>. Each finding is one line naming the file and the key.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+    </main>
+  </div>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>
+        <p>Local tools for working with Claude Code, by Sviatoslav Kolesnyk (<a href="https://github.com/mr-wheelkers">mr-wheelkers</a> on GitHub).</p>
+        <p>Every tool is licensed under Apache-2.0.</p>
+        <p class="small">These are independent tools. Claude Code is a product of Anthropic.</p>
+      </div>
+      <nav aria-label="Tools">
+        <p><strong>Tools</strong></p>
+        <ul><li><a href="../../daleq/">daleq</a></li><li><a href="../../drawingboard/">drawingboard</a></li><li><a href="../../imgcompare/">imgcompare</a></li><li><a href="../../godot-pilot/">godot-pilot</a></li><li><a href="../../simq/">simq</a></li></ul>
+      </nav>
+      <nav aria-label="Documentation">
+        <p><strong>Documentation</strong></p>
+        <ul><li><a href="../../docs/daleq/">daleq</a></li><li><a href="../../docs/drawingboard/">drawingboard</a></li><li><a href="../../docs/imgcompare/">imgcompare</a></li><li><a href="../../docs/godot-pilot/">godot-pilot</a></li><li><a href="../../docs/simq/">simq</a></li></ul>
+      </nav>
+    </div>
+  </footer>
+  <script src="../../assets/tools.js"></script>
+  <script src="../../assets/site.js"></script>
+</body>
+</html>

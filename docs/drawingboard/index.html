@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>drawingboard documentation</title>
+  <meta name="description" content="Install, quick start, concepts, commands, Claude Code integration, security and troubleshooting for drawingboard.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect x='1.0' y='5' width='5' height='24' fill='%23F2B416'/%3E%3Crect x='7.6' y='5' width='5' height='24' fill='%232B66D9'/%3E%3Crect x='14.2' y='5' width='5' height='24' fill='%23C92A74'/%3E%3Crect x='20.8' y='5' width='5' height='24' fill='%230B7A6F'/%3E%3Crect x='27.4' y='5' width='5' height='24' fill='%23E8692F'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body data-tool="drawingboard">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="../../"><svg class="rack" viewBox="0 0 34 22" aria-hidden="true" focusable="false"><rect x="1.0" y="12" width="5" height="9" fill="#F2B416"/><rect x="7.6" y="1" width="5" height="20" fill="#2B66D9"/><rect x="14.2" y="12" width="5" height="9" fill="#C92A74"/><rect x="20.8" y="12" width="5" height="9" fill="#0B7A6F"/><rect x="27.4" y="12" width="5" height="9" fill="#E8692F"/></svg><span>mr-wheelkers tools</span></a>
+      <nav class="site-nav" aria-label="Site">
+        <ul>
+        <li data-tool="daleq"><a href="../../daleq/">daleq</a></li>
+        <li data-tool="drawingboard"><a href="../../drawingboard/">drawingboard</a></li>
+        <li data-tool="imgcompare"><a href="../../imgcompare/">imgcompare</a></li>
+        <li data-tool="godot-pilot"><a href="../../godot-pilot/">godot-pilot</a></li>
+        <li data-tool="simq"><a href="../../simq/">simq</a></li>
+        <li class="docs-link"><a href="../../docs/" aria-current="page">Docs</a></li>
+        </ul>
+      </nav>
+      <button class="theme-btn" type="button" hidden>Dark theme</button>
+    </div>
+  </header>
+
+  <div class="wrap docs">
+    <aside class="docs-side">
+      <nav aria-label="On this page">
+        <p class="side-title">On this page</p>
+        <ul>
+            <li><a href="#install">Install</a></li>
+            <li><a href="#quick-start">Quick start</a></li>
+            <li><a href="#concepts">Concepts</a></li>
+            <li><a href="#commands">Command reference</a></li>
+            <li><a href="#claude-code">Claude Code integration</a></li>
+            <li><a href="#security">Security and privacy</a></li>
+            <li><a href="#troubleshooting">Troubleshooting</a></li>
+        </ul>
+      </nav>
+      <nav class="others" aria-label="Documentation for each tool">
+        <p class="side-title">Documentation</p>
+        <ul>
+            <li data-tool="daleq"><a href="../daleq/">daleq</a></li>
+            <li data-tool="drawingboard"><a href="../drawingboard/" aria-current="page">drawingboard</a></li>
+            <li data-tool="imgcompare"><a href="../imgcompare/">imgcompare</a></li>
+            <li data-tool="godot-pilot"><a href="../godot-pilot/">godot-pilot</a></li>
+            <li data-tool="simq"><a href="../simq/">simq</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main id="main" class="docs-main">
+      <h1>drawingboard documentation</h1>
+      <p class="lede">drawingboard is a local design and task board that lives inside your project and is shared by you and Claude. Everything is a plain JSON file in <code>drawingboard/</code>, committed with your code. The app is one binary that serves a web UI on 127.0.0.1.</p>
+      <p class="status-line"><span class="badge" data-status="drawingboard">Not public yet</span> <a href="../../drawingboard/">About drawingboard</a> <a data-repo="drawingboard" href="#" hidden>Source on GitHub</a></p>
+        <section aria-labelledby="install">
+          <h2 id="install"><a href="#install">Install</a></h2>
+          <p class="private-note" data-private="drawingboard"><strong>Not public yet.</strong> There is no public repository or release yet. This is how it will work once there is one.</p>
+          <p>You need Claude Code (<code>claude</code> on your PATH) for the Claude parts. The board itself works without it.</p>
+          <ul>
+            <li><strong>Download the binary</strong> for your platform, if a release is available, and put it on your PATH as <code>drawingboard</code>.</li>
+            <li><strong>Or build it</strong> from the repository with Go and Node. Node is only needed to build the UI; the binary embeds it.</li>
+          </ul>
+          <div class="cmd"><pre><code>make build<span class="k">       # bin/drawingboard</span>
+make install<span class="k">     # copies it to ~/.local/bin/drawingboard</span></code></pre></div>
+          <p>Check with <code>drawingboard help</code>. It is developed on macOS and should work on Linux. On Windows the Claude terminal is not available yet.</p>
+          <p>The check hook that <code>init</code> installs runs <code>drawingboard</code> by name, so keep it on your PATH.</p>
+        </section>
+        <section aria-labelledby="quick-start">
+          <h2 id="quick-start"><a href="#quick-start">Quick start</a></h2>
+          <ol>
+            <li><strong>Prepare your project.</strong> In your project folder (a git repository is best), run <code>drawingboard init</code>. It creates <code>drawingboard/</code> with a sample screen, a sample mark and a sample task, installs the drawingboard skill for Claude (<code>.claude/skills/drawingboard/</code>), adds a short section to <code>CLAUDE.md</code>, and adds Claude Code hooks. <code>--dry-run</code> shows what it would do; running it again changes nothing. <code>--no-sample</code> skips the sample.</li>
+            <li><strong>Start the app</strong> with <code>drawingboard</code> (or <code>drawingboard -open</code>) and open <code>http://127.0.0.1:4320</code>.</li>
+            <li><strong>Look at the sample.</strong> The Main canvas has a Welcome web page with a numbered pin on its "Get started" button. That pin is a mark.</li>
+            <li><strong>Draw a screen.</strong> Click New screen, pick a platform and a name. Click kinds in the palette to add them, drag them into place and edit their labels in the inspector. Every change is saved to a file at once.</li>
+            <li><strong>Place a mark.</strong> Press <kbd>M</kbd> for mark mode, pick Comment pin (<kbd>C</kbd>) and click your button. Write what you want and save. Press <kbd>Esc</kbd> twice to leave mark mode.</li>
+            <li><strong>Ask Claude.</strong> Press <kbd>Ctrl</kbd>+<kbd>&#96;</kbd> to open the terminal dock. In the Marks tab, click "Ask Claude to address open marks". The request is typed into the terminal for you; press Enter.</li>
+            <li><strong>See the mark addressed.</strong> Claude reads the marks, looks at the screen, changes it, replies on each mark and sets it to <code>addressed</code>. If you agree, set it to Resolved.</li>
+          </ol>
+        </section>
+        <section aria-labelledby="concepts">
+          <h2 id="concepts"><a href="#concepts">Concepts</a></h2>
+          <h3>Canvases and screens</h3>
+          <p>A canvas is an infinite surface; each one is a folder in <code>drawingboard/canvas/</code>. A screen is a mockup of one window, page or phone screen, stored as one JSON file that holds its whole tree of elements. Zones group screens on a canvas.</p>
+          <h3>The catalog and platforms</h3>
+          <p>Screens and elements are typed placeholders from a built-in catalog for five platforms: macOS, Windows, iOS, Android and web, plus architecture diagrams. Every type has props, defaults and placement rules; <code>drawingboard catalog -short ios</code> lists one platform's. A placeholder kind covers anything missing.</p>
+          <h3>Layouts as hints</h3>
+          <p>Elements can be placed freely or arranged by a stack, grid or flex. These are hints about how the real app should behave: a flex wraps when space runs short, a stack or a grid doesn't and scrolls, scales or shrinks instead. Claude reads them to choose the framework's natural equivalent, such as a <code>StackPanel</code>, a <code>VStack</code> or CSS grid.</p>
+          <h3>Marks</h3>
+          <p>A mark is you (or Claude) pointing at something on a screen and saying something about it. Marks are anchored to nodes by id, and they carry a snapshot of what was marked, so they stay readable after the screen changes. One mark is one small file:</p>
+          <div class="cmd"><pre><code>canvas/&lt;canvas&gt;/marks/&lt;screen-id&gt;/&lt;mark-id&gt;.json     one mark = one file</code></pre></div>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Kind / What it is">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Kind</th><th scope="col">What it is</th></tr></thead>
+              <tbody>
+              <tr><td data-label="Kind"><code>comment</code></td><td data-label="What it is">a pin on an element, with your note</td></tr>
+              <tr><td data-label="Kind"><code>box</code></td><td data-label="What it is">a rectangle or ellipse around something</td></tr>
+              <tr><td data-label="Kind"><code>arrow</code></td><td data-label="What it is">from a node or point to another</td></tr>
+              <tr><td data-label="Kind"><code>strike</code></td><td data-label="What it is">remove this</td></tr>
+              <tr><td data-label="Kind"><code>move</code></td><td data-label="What it is">this should go there</td></tr>
+              <tr><td data-label="Kind"><code>text</code></td><td data-label="What it is">a note written on the canvas</td></tr>
+              <tr><td data-label="Kind"><code>pen</code></td><td data-label="What it is">a freehand stroke</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>A mark's status goes from <code>open</code> to <code>addressed</code> (Claude or someone changed something) to <code>resolved</code> (you agree). <code>wontfix</code> is also allowed. Claude can also ask you questions as marks.</p>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Tool / Key / Click / Drag">
+            <table class="cols-many">
+              <thead><tr><th scope="col">Tool</th><th scope="col">Key</th><th scope="col">Click</th><th scope="col">Drag</th></tr></thead>
+              <tbody>
+              <tr><td data-label="Tool">Select</td><td data-label="Key">V</td><td data-label="Click">select a node or a mark</td><td data-label="Drag"></td></tr>
+              <tr><td data-label="Tool">Comment pin</td><td data-label="Key">C</td><td data-label="Click">a numbered pin on the element, with your note</td><td data-label="Drag">a box with a note</td></tr>
+              <tr><td data-label="Tool">Text</td><td data-label="Key">T</td><td data-label="Click">write on the canvas</td><td data-label="Drag">write in a box of that size</td></tr>
+              <tr><td data-label="Tool">Rectangle</td><td data-label="Key">R</td><td data-label="Click">a box around the element</td><td data-label="Drag">a box</td></tr>
+              <tr><td data-label="Tool">Ellipse</td><td data-label="Key">O</td><td data-label="Click">an ellipse around the element</td><td data-label="Drag">an ellipse</td></tr>
+              <tr><td data-label="Tool">Arrow</td><td data-label="Key">A</td><td data-label="Click"></td><td data-label="Drag">an arrow from one element (or point) to another</td></tr>
+              <tr><td data-label="Tool">Strike</td><td data-label="Key">S</td><td data-label="Click">"remove this"</td><td data-label="Drag">strike the pressed element</td></tr>
+              <tr><td data-label="Tool">Move this there</td><td data-label="Key">G</td><td data-label="Click"></td><td data-label="Drag">the pressed element should go where you drop</td></tr>
+              <tr><td data-label="Tool">Pen</td><td data-label="Key">P</td><td data-label="Click"></td><td data-label="Drag">a freehand stroke</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Tasks</h3>
+          <p>The Tasks tab is a board of columns. Each column is a folder in <code>drawingboard/tasks/</code>, and a task's column is its status: dragging a card to another column moves its file. Fields are configurable, forms give tasks their own fields, and refs link a task to screens, elements, marks and other tasks.</p>
+          <h3>Notes, mind maps and architecture diagrams</h3>
+          <p>Markdown sticky notes and mind maps (a markdown nested list drawn as a tree) sit on the canvas next to screens, along with images. An architecture diagram shows the system behind the screens: services, boundaries and links with protocols.</p>
+          <h3>Lock</h3>
+          <p>The Lock toggle in the canvas toolbar (or <kbd>L</kbd>) is a preview mode: look at a canvas without moving anything by accident. It locks only the view; nothing is saved, and what Claude changes still shows up live.</p>
+          <h3>Checkpoints</h3>
+          <p>A checkpoint is a named snapshot of <code>drawingboard/</code>. In a git repository it is a commit on a ref of its own (<code>refs/drawingboard/checkpoints/&lt;id&gt;</code>): your branch, HEAD and index are never touched. Without git it is a copy in <code>.drawingboard-checkpoints/</code> next to the board. Checkpoints are taken automatically before the terminal starts a new or continued session, before a Doctor run and before every restore. The newest 50 are kept.</p>
+          <h3>Export</h3>
+          <p>Export makes PNG pictures exactly as the app draws them, without selection or marks. Saved to the board, they land in <code>canvas/&lt;canvas&gt;/exports/&lt;id&gt;.png</code>. Claude reads these pictures when the text outline is not enough, and <code>drawingboard show</code> says when one is stale.</p>
+          <h3>Doctor</h3>
+          <p>The Doctor tab shows project metrics and can run a read-only self-diagnosis by Claude that lists issues and saves a report in <code>drawingboard/doctor/</code>. A run costs real money on your Claude account; it starts only when you click. A daleq card appears when the project has a <code>.daleq.toml</code>.</p>
+          <h3>What to commit</h3>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Path / Commit?">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Path</th><th scope="col">Commit?</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Path"><code>drawingboard/canvas/</code>, <code>drawingboard/tasks/</code></td><td data-label="Commit?">yes: screens, zones, notes, marks, tasks, media</td></tr>
+              <tr><td class="wrap-code" data-label="Path"><code>drawingboard/README.md</code></td><td data-label="Commit?">yes: the format guide; the binary keeps it up to date</td></tr>
+              <tr><td class="wrap-code" data-label="Path"><code>drawingboard/.gitignore</code></td><td data-label="Commit?">yes: it keeps the lock file out</td></tr>
+              <tr><td class="wrap-code" data-label="Path"><code>drawingboard/.lock</code></td><td data-label="Commit?">no (ignored): the board lock, runtime only</td></tr>
+              <tr><td class="wrap-code" data-label="Path"><code>drawingboard/canvas/*/exports/*.png</code></td><td data-label="Commit?">your choice, committed by default</td></tr>
+              <tr><td class="wrap-code" data-label="Path"><code>drawingboard/doctor/*.json</code></td><td data-label="Commit?">your choice, committed by default</td></tr>
+              <tr><td class="wrap-code" data-label="Path"><code>.claude/skills/drawingboard/</code>, <code>.claude/settings.json</code></td><td data-label="Commit?">yes: they teach every Claude session in the project about the board</td></tr>
+              <tr><td class="wrap-code" data-label="Path"><code>.drawingboard-checkpoints/</code></td><td data-label="Commit?">no: local snapshots, only without git; add it to your <code>.gitignore</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section aria-labelledby="commands">
+          <h2 id="commands"><a href="#commands">Command reference</a></h2>
+          <p>Every command works on <code>./drawingboard</code> unless you pass a board folder (<code>-board dir</code> or a board-dir argument). <code>drawingboard help</code> prints the full usage.</p>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Command / What it does">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Command</th><th scope="col">What it does</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard [serve] [-port 4320] [-open] [board-dir]</code></td><td data-label="What it does">serve the app on 127.0.0.1 (the default command)</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard init [DIR] [--dry-run] [--json] [--no-sample] ...</code></td><td data-label="What it does">prepare a project: board, sample, skill, CLAUDE.md section, hooks</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard status [--json]</code></td><td data-label="What it does">the whole board on one screen: canvases, open marks, tasks, check totals, Doctor</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard check [board-dir]</code></td><td data-label="What it does">validate the board; exit 1 on errors</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard catalog [-short] [-json] [platform | platform.kind]</code></td><td data-label="What it does">the mockup types and their props</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard show canvas/&lt;c&gt;/&lt;screen&gt;.json</code></td><td data-label="What it does">a screen as a text outline, with open marks</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard patch canvas/&lt;c&gt;/&lt;screen&gt;.json '&lt;ops&gt;'</code></td><td data-label="What it does">edit a canvas file by node id, the way the app does</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard marks [-all] [-canvas name]</code></td><td data-label="What it does">list the open marks (or all)</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard mark &lt;id&gt; &lt;status&gt; [reply]</code></td><td data-label="What it does">set a mark's status, optionally with a reply</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard mark add canvas/&lt;c&gt;/&lt;screen&gt;.json[#node] "&lt;text&gt;"</code></td><td data-label="What it does">add a mark as Claude (a question)</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard export canvas/&lt;c&gt;/&lt;file&gt;.json</code></td><td data-label="What it does">save a PNG of a screen, note, mind map, image or zone; <code>--all</code> for every screen and item</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard task &lt;list|show|new|move|set|reply|field|forms|column&gt;</code></td><td data-label="What it does">work the task board; <code>drawingboard task help</code></td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard checkpoint [create "&lt;label&gt;" | list | diff &lt;id&gt; | restore &lt;id&gt;]</code></td><td data-label="What it does">snapshots of the board</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard format</code></td><td data-label="What it does">print the board format guide</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard hook posttooluse|pretooluse|sessionstart|userpromptsubmit</code></td><td data-label="What it does">the Claude Code hooks that <code>init</code> installs</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>What the marks commands print</h3>
+          <p><code>marks</code> prints, for each mark: id, status, screen, node id, the snapshot, whether the node still exists, and the text. Ellipses, pen strokes and text marks say where they are in words:</p>
+          <figure class="term">
+            <figcaption class="bar"><span>drawingboard marks</span></figcaption>
+            <pre><code><span class="o">[ellipse] around n-btn-save</span>
+<span class="o">[pen] stroke around n-list (12 points, bounding box 40,20 160×60)</span>
+<span class="o">[text] "use icons here" at 16,8 in n-toolbar</span></code></pre>
+          </figure>
+          <p><code>show</code> prints the screen as an indented tree in reading order: id, type, label and geometry; derived hints such as "same row as n-btn-cancel"; and each node's open marks inline, under it.</p>
+        </section>
+        <section aria-labelledby="claude-code">
+          <h2 id="claude-code"><a href="#claude-code">Claude Code integration</a></h2>
+          <h3>What init installs</h3>
+          <p><code>drawingboard init</code> installs the drawingboard skill (<code>.claude/skills/drawingboard/</code>), adds a short section to <code>CLAUDE.md</code>, and adds Claude Code hooks to <code>.claude/settings.json</code>:</p>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Hook / What it does">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Hook</th><th scope="col">What it does</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Hook"><code>drawingboard hook posttooluse</code></td><td data-label="What it does">checks board files after Claude edits them, and logs which screens Claude wrote</td></tr>
+              <tr><td class="wrap-code" data-label="Hook"><code>drawingboard hook pretooluse</code></td><td data-label="What it does">before a Bash command, stamps the screens so that changes made during it can be logged</td></tr>
+              <tr><td class="wrap-code" data-label="Hook"><code>drawingboard hook sessionstart</code></td><td data-label="What it does">gives a new (or resumed, cleared, compacted) session a digest: open marks with the newest five, screens changed since the last digest, Doing and To do tasks</td></tr>
+              <tr><td class="wrap-code" data-label="Hook"><code>drawingboard hook userpromptsubmit</code></td><td data-label="What it does">adds one line to a prompt only when the board changed since the last prompt other than by Claude</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The digest and the notice are silent on any error and take about a millisecond. What they last saw is kept in <code>drawingboard/.state/hooks.json</code>; <code>.state/</code> ignores itself in git.</p>
+          <h3>How Claude works with marks</h3>
+          <div class="cmd"><pre><code>drawingboard marks<span class="k">                      # open marks across the board, one per line</span>
+drawingboard marks --all<span class="k">                # every status</span>
+drawingboard show canvas/demo/prefs-macos.json<span class="k">   # outline of the screen with marks inline</span>
+drawingboard mark m-0007 addressed "Made it primary and 96px wide"<span class="k">   # status + reply</span></code></pre></div>
+          <p>Claude reads <code>show</code> before editing a screen with marks. After making the change, it sets the mark to <code>addressed</code> with a short reply. It never sets <code>resolved</code>: that is your call. The CLI enforces it: <code>drawingboard mark &lt;id&gt; resolved</code> (or <code>wontfix</code>) on a mark whose author is <code>user</code> is refused. Claude may resolve its own marks.</p>
+          <h3>Who changed a screen</h3>
+          <p>Marks carry their author, but a screen file does not, so every write to a screen is logged in <code>drawingboard/.state/writes.jsonl</code>. The app's writes count as yours. The CLI's writes and Claude's Edit, Write and Bash tools count as Claude's. The prompt hook then reports a screen you edited in the app, leaves out one that is exactly as Claude's last logged write left it, and reports anything else neutrally.</p>
+          <h3>The terminal and Ask Claude</h3>
+          <p>The terminal dock runs the real <code>claude</code> CLI, interactively, in your project root, so it uses your project's CLAUDE.md, settings, skills and MCP servers and your own login. There is one session per server: it survives page reloads, and several tabs share it.</p>
+          <p>"Ask Claude" buttons open the dock and type a reference to a node, a mark or a task, such as <code>canvas/main/welcome.json#n-start mark m-0001 "Try it: ..."</code>. They never press Enter: you can add to the text, then press Enter yourself.</p>
+          <p>"New session" restarts <code>claude</code>; "Continue last" restarts <code>claude --continue</code>. A checkpoint of the board is taken first.</p>
+        </section>
+        <section aria-labelledby="security">
+          <h2 id="security"><a href="#security">Security and privacy</a></h2>
+          <ul>
+            <li>The app listens only on your own machine (127.0.0.1). It rejects requests that come through another host name, which blocks a known trick where a web page tries to reach local servers.</li>
+            <li>There are no accounts and no cloud. Nothing leaves your machine except what Claude Code itself sends to Anthropic.</li>
+            <li>The Claude terminal is a full Claude Code session with your own permissions, not a sandbox. It can do in your project whatever <code>claude</code> can do in your terminal. Only the app's own page can open it: it needs a secret token created each time the server starts, which other web pages can't read.</li>
+            <li>Editing your Claude files, starting a Doctor run and installing tools also need that token. Settings and <code>.mcp.json</code> are read-only in the app, and values that look like secrets (keys, tokens, passwords) are masked before they reach the browser.</li>
+            <li>The Doctor's diagnosis is read-only: Claude may only read, grep and glob files (no shell, no edits, no MCP), with a spending cap. It runs only when you click.</li>
+            <li>Files you add (images, attachments) are limited to safe types, and the app never serves files from outside the board.</li>
+          </ul>
+          <h3>Board text is data</h3>
+          <p>Mark text is written by the developer and by Claude, so <code>marks</code>, <code>show</code> and <code>status</code> print a header line saying that the board content is data, not instructions, and quote every mark text and reply.</p>
+          <h3>What gets pushed</h3>
+          <p>Checkpoints in git are refs under <code>refs/drawingboard/</code>, which <code>git push</code> does not send unless you ask for them. Exports and Doctor reports are committed by default; the <code>.gitignore</code> that <code>drawingboard</code> writes into a new board has the two lines ready to uncomment (<code>canvas/*/exports/</code> and <code>doctor/</code>).</p>
+        </section>
+        <section aria-labelledby="troubleshooting">
+          <h2 id="troubleshooting"><a href="#troubleshooting">Troubleshooting</a></h2>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Symptom / What to do">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Symptom</th><th scope="col">What to do</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Symptom">Claude in the dock does not know about the board</td><td data-label="What to do">Start a new session if the dock was open before <code>init</code>, so Claude loads the skill.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">The check hook fails to run</td><td data-label="What to do">It runs <code>drawingboard</code> by name. Keep the binary on your PATH.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">Nothing on the canvas can be moved</td><td data-label="What to do">The view is locked. Press <kbd>L</kbd> again to unlock.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>drawingboard check</code> exits 1</td><td data-label="What to do">The board has errors; the output lists them. It also reports marks whose screen no longer exists.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>drawingboard mark &lt;id&gt; resolved</code> is refused</td><td data-label="What to do">Claude may not resolve your marks. Set <code>addressed</code> instead, or resolve it yourself in the app.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>export</code> says it drew the picture headless</td><td data-label="What to do">The app is not open, or its tab is hidden or asleep, so the command used a headless Chrome, Chromium, Edge or Brave instead.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">No Claude terminal on Windows</td><td data-label="What to do">The Claude terminal is not available on Windows yet.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">A change went wrong</td><td data-label="What to do">Restore a checkpoint from the Doctor tab, or with <code>list</code> and <code>restore &lt;id&gt;</code> of the <code>drawingboard checkpoint</code> command. A restore takes a checkpoint of the current state first, so you can undo it.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+    </main>
+  </div>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>
+        <p>Local tools for working with Claude Code, by Sviatoslav Kolesnyk (<a href="https://github.com/mr-wheelkers">mr-wheelkers</a> on GitHub).</p>
+        <p>Every tool is licensed under Apache-2.0.</p>
+        <p class="small">These are independent tools. Claude Code is a product of Anthropic.</p>
+      </div>
+      <nav aria-label="Tools">
+        <p><strong>Tools</strong></p>
+        <ul><li><a href="../../daleq/">daleq</a></li><li><a href="../../drawingboard/">drawingboard</a></li><li><a href="../../imgcompare/">imgcompare</a></li><li><a href="../../godot-pilot/">godot-pilot</a></li><li><a href="../../simq/">simq</a></li></ul>
+      </nav>
+      <nav aria-label="Documentation">
+        <p><strong>Documentation</strong></p>
+        <ul><li><a href="../../docs/daleq/">daleq</a></li><li><a href="../../docs/drawingboard/">drawingboard</a></li><li><a href="../../docs/imgcompare/">imgcompare</a></li><li><a href="../../docs/godot-pilot/">godot-pilot</a></li><li><a href="../../docs/simq/">simq</a></li></ul>
+      </nav>
+    </div>
+  </footer>
+  <script src="../../assets/tools.js"></script>
+  <script src="../../assets/site.js"></script>
+</body>
+</html>

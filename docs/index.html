@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Documentation: local tools for working with Claude Code</title>
+  <meta name="description" content="Documentation for daleq, drawingboard, imgcompare, godot-pilot and simq.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect x='1.0' y='5' width='5' height='24' fill='%23F2B416'/%3E%3Crect x='7.6' y='5' width='5' height='24' fill='%232B66D9'/%3E%3Crect x='14.2' y='5' width='5' height='24' fill='%23C92A74'/%3E%3Crect x='20.8' y='5' width='5' height='24' fill='%230B7A6F'/%3E%3Crect x='27.4' y='5' width='5' height='24' fill='%23E8692F'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="../"><svg class="rack" viewBox="0 0 34 22" aria-hidden="true" focusable="false"><rect x="1.0" y="1" width="5" height="20" fill="#F2B416"/><rect x="7.6" y="1" width="5" height="20" fill="#2B66D9"/><rect x="14.2" y="1" width="5" height="20" fill="#C92A74"/><rect x="20.8" y="1" width="5" height="20" fill="#0B7A6F"/><rect x="27.4" y="1" width="5" height="20" fill="#E8692F"/></svg><span>mr-wheelkers tools</span></a>
+      <nav class="site-nav" aria-label="Site">
+        <ul>
+        <li data-tool="daleq"><a href="../daleq/">daleq</a></li>
+        <li data-tool="drawingboard"><a href="../drawingboard/">drawingboard</a></li>
+        <li data-tool="imgcompare"><a href="../imgcompare/">imgcompare</a></li>
+        <li data-tool="godot-pilot"><a href="../godot-pilot/">godot-pilot</a></li>
+        <li data-tool="simq"><a href="../simq/">simq</a></li>
+        <li class="docs-link"><a href="../docs/" aria-current="page">Docs</a></li>
+        </ul>
+      </nav>
+      <button class="theme-btn" type="button" hidden>Dark theme</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="wrap">
+        <h1>Documentation</h1>
+        <p class="lede">One page per tool, each with the same parts: install, quick start, concepts, command reference, Claude Code integration, security and privacy, troubleshooting.</p>
+      </div>
+    </section>
+    <section class="band" aria-labelledby="all">
+      <div class="wrap">
+        <h2 id="all">Choose a tool</h2>
+        <ul class="tool-rows">
+          <li class="tool-row" data-tool="daleq">
+            <div>
+              <h3><a href="daleq/">daleq</a></h3>
+              <p class="what">Job daemon for long commands</p>
+            </div>
+            <div>
+              <p>daleq is a small local daemon that runs long commands for a coding agent: it hands back a job id at once, runs the command under watchdogs, and keeps every output and outcome on disk. Supported on macOS and Linux; Windows is experimental.</p>
+              <p class="links"><a href="daleq/#install">Install</a> <a href="daleq/#quick-start">Quick start</a> <a href="daleq/#concepts">Concepts</a> <a href="daleq/#commands">Command reference</a> <a href="daleq/#claude-code">Claude Code integration</a> <a href="daleq/#security">Security and privacy</a> <a href="daleq/#troubleshooting">Troubleshooting</a></p>
+            </div>
+          </li>
+          <li class="tool-row" data-tool="drawingboard">
+            <div>
+              <h3><a href="drawingboard/">drawingboard</a></h3>
+              <p class="what">Design and task board</p>
+            </div>
+            <div>
+              <p>drawingboard is a local design and task board that lives inside your project and is shared by you and Claude. Everything is a plain JSON file in <code>drawingboard/</code>, committed with your code. The app is one binary that serves a web UI on 127.0.0.1.</p>
+              <p class="links"><a href="drawingboard/#install">Install</a> <a href="drawingboard/#quick-start">Quick start</a> <a href="drawingboard/#concepts">Concepts</a> <a href="drawingboard/#commands">Command reference</a> <a href="drawingboard/#claude-code">Claude Code integration</a> <a href="drawingboard/#security">Security and privacy</a> <a href="drawingboard/#troubleshooting">Troubleshooting</a></p>
+            </div>
+          </li>
+          <li class="tool-row" data-tool="imgcompare">
+            <div>
+              <h3><a href="imgcompare/">imgcompare</a></h3>
+              <p class="what">Picture review</p>
+            </div>
+            <div>
+              <p>imgcompare is a local review page plus a CLI for comparing pictures: art directions, mockups, screenshots, icons. The reviewer marks, votes and picks in the browser; Claude reads the feedback back as Markdown or JSON. It needs Node 20+ and has no dependencies.</p>
+              <p class="links"><a href="imgcompare/#install">Install</a> <a href="imgcompare/#quick-start">Quick start</a> <a href="imgcompare/#concepts">Concepts</a> <a href="imgcompare/#commands">Command reference</a> <a href="imgcompare/#claude-code">Claude Code integration</a> <a href="imgcompare/#security">Security and privacy</a> <a href="imgcompare/#troubleshooting">Troubleshooting</a></p>
+            </div>
+          </li>
+          <li class="tool-row" data-tool="godot-pilot">
+            <div>
+              <h3><a href="godot-pilot/">godot-pilot</a></h3>
+              <p class="what">Godot test and debug harness</p>
+            </div>
+            <div>
+              <p>GodotPilot gives Claude hands and eyes on a Godot 4.7.2 .NET project in development: the running game, the editor, and the project's configuration. It stays out of exported builds. macOS and C# only. Jev (TypeSafe AI) is its optional, paid fast eyes and classifier.</p>
+              <p class="links"><a href="godot-pilot/#install">Install</a> <a href="godot-pilot/#quick-start">Quick start</a> <a href="godot-pilot/#concepts">Concepts</a> <a href="godot-pilot/#commands">Command reference</a> <a href="godot-pilot/#claude-code">Claude Code integration</a> <a href="godot-pilot/#security">Security and privacy</a> <a href="godot-pilot/#troubleshooting">Troubleshooting</a></p>
+            </div>
+          </li>
+          <li class="tool-row" data-tool="simq">
+            <div>
+              <h3><a href="simq/">simq</a></h3>
+              <p class="what">iOS simulator test queue</p>
+            </div>
+            <div>
+              <p>simq is a queue for iOS simulator tests. Any number of sessions (people, scripts, Claude Code agents) submit a test run; an always-on harness runs them one per simulator, with warm DerivedData, and hands back the result. It is being folded into daleq's iOS plugin, which reads the same <code>.simq.toml</code>.</p>
+              <p class="links"><a href="simq/#install">Install</a> <a href="simq/#quick-start">Quick start</a> <a href="simq/#concepts">Concepts</a> <a href="simq/#commands">Command reference</a> <a href="simq/#claude-code">Claude Code integration</a> <a href="simq/#security">Security and privacy</a> <a href="simq/#troubleshooting">Troubleshooting</a></p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>
+        <p>Local tools for working with Claude Code, by Sviatoslav Kolesnyk (<a href="https://github.com/mr-wheelkers">mr-wheelkers</a> on GitHub).</p>
+        <p>Every tool is licensed under Apache-2.0.</p>
+        <p class="small">These are independent tools. Claude Code is a product of Anthropic.</p>
+      </div>
+      <nav aria-label="Tools">
+        <p><strong>Tools</strong></p>
+        <ul><li><a href="../daleq/">daleq</a></li><li><a href="../drawingboard/">drawingboard</a></li><li><a href="../imgcompare/">imgcompare</a></li><li><a href="../godot-pilot/">godot-pilot</a></li><li><a href="../simq/">simq</a></li></ul>
+      </nav>
+      <nav aria-label="Documentation">
+        <p><strong>Documentation</strong></p>
+        <ul><li><a href="../docs/daleq/">daleq</a></li><li><a href="../docs/drawingboard/">drawingboard</a></li><li><a href="../docs/imgcompare/">imgcompare</a></li><li><a href="../docs/godot-pilot/">godot-pilot</a></li><li><a href="../docs/simq/">simq</a></li></ul>
+      </nav>
+    </div>
+  </footer>
+  <script src="../assets/tools.js"></script>
+  <script src="../assets/site.js"></script>
+</body>
+</html>
