@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>drawingboard: a design and task board shared by you and Claude</title>
+  <meta name="description" content="drawingboard is a local mockup and task board in your repository. Marks you draw are data on element ids that Claude Code reads and answers.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect x='1.0' y='5' width='5' height='24' fill='%23F2B416'/%3E%3Crect x='7.6' y='5' width='5' height='24' fill='%232B66D9'/%3E%3Crect x='14.2' y='5' width='5' height='24' fill='%23C92A74'/%3E%3Crect x='20.8' y='5' width='5' height='24' fill='%230B7A6F'/%3E%3Crect x='27.4' y='5' width='5' height='24' fill='%23E8692F'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body data-tool="drawingboard">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="../"><svg class="rack" viewBox="0 0 34 22" aria-hidden="true" focusable="false"><rect x="1.0" y="12" width="5" height="9" fill="#F2B416"/><rect x="7.6" y="1" width="5" height="20" fill="#2B66D9"/><rect x="14.2" y="12" width="5" height="9" fill="#C92A74"/><rect x="20.8" y="12" width="5" height="9" fill="#0B7A6F"/><rect x="27.4" y="12" width="5" height="9" fill="#E8692F"/></svg><span>mr-wheelkers tools</span></a>
+      <nav class="site-nav" aria-label="Site">
+        <ul>
+        <li data-tool="daleq"><a href="../daleq/">daleq</a></li>
+        <li data-tool="drawingboard"><a href="../drawingboard/" aria-current="page">drawingboard</a></li>
+        <li data-tool="imgcompare"><a href="../imgcompare/">imgcompare</a></li>
+        <li data-tool="godot-pilot"><a href="../godot-pilot/">godot-pilot</a></li>
+        <li data-tool="simq"><a href="../simq/">simq</a></li>
+        <li class="docs-link"><a href="../docs/">Docs</a></li>
+        </ul>
+      </nav>
+      <button class="theme-btn" type="button" hidden>Dark theme</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero tool-hero">
+      <div class="wrap hero-grid">
+        <div class="hero-text">
+          <h1>drawingboard</h1>
+          <p class="lede">A local design and task board that lives inside your project and is shared by you and Claude. You draw mockup screens, mark them up and keep tasks; Claude Code reads and edits the same files.</p>
+          <p class="status-line"><span class="badge" data-status="drawingboard">Not public yet</span> <a href="../docs/drawingboard/">Read the documentation</a> <a data-repo="drawingboard" href="#" hidden>Source on GitHub</a></p>
+        </div>
+        <figure class="hero-figure">
+    <svg viewBox="0 0 480 446" role="img" aria-labelledby="loop-t loop-d">
+      <title id="loop-t">The drawingboard loop: you mark, Claude addresses, you resolve</title>
+      <desc id="loop-d">You place a mark on an element of a mockup screen. It is saved as one JSON file on the element&#x27;s id with status open. Claude Code reads the mark, patches the screen file, replies on the mark and sets it to addressed. Only you set it to resolved.</desc>
+      <path class="d-flow" d="M120.0 386.0 L163.0 386.0"/>
+      <path class="d-flow" d="M300.0 386.0 L343.0 386.0"/>
+      <path class="d-flow" d="M230.0 85.0 L273.0 85.0"/>
+      <path class="d-pulse" d="M230.0 85.0 L273.0 85.0"/>
+      <path class="d-flow" d="M370.0 140.0 L370.0 233.0"/>
+      <path class="d-pulse" d="M370.0 140.0 L370.0 233.0"/>
+      <path class="d-flow" d="M280.0 268.0 L137.0 268.0 Q125.0 268.0 125.0 256.0 L125.0 197.0"/>
+      <path class="d-pulse" d="M280.0 268.0 L137.0 268.0 Q125.0 268.0 125.0 256.0 L125.0 197.0"/>
+      <path class="d-flow" d="M370.0 296.0 L370.0 326.0 Q370.0 338.0 358.0 338.0 L245.5 338.0 Q235.0 338.0 235.0 348.5 L235.0 359.0"/>
+      <path class="d-pulse" d="M370.0 296.0 L370.0 326.0 Q370.0 338.0 358.0 338.0 L245.5 338.0 Q235.0 338.0 235.0 348.5 L235.0 359.0"/>
+      <rect class="d-plate" x="20" y="20" width="210" height="170" rx="9"/>
+      <path class="d-line" d="M20 46 H230"/>
+      <text class="d-s" x="34" y="38" text-anchor="start">Preferences</text>
+      <rect class="d-soft" x="38" y="64" width="120" height="12" rx="3"/>
+      <rect class="d-soft" x="38" y="88" width="88" height="12" rx="3"/>
+      <rect class="d-soft" x="134" y="136" width="76" height="32" rx="6"/>
+      <text class="d-t" x="172" y="157" text-anchor="middle">Save</text>
+      <ellipse class="d-flow" cx="172" cy="152" rx="52" ry="27" transform="rotate(-4 172 152)"/>
+      <g data-tool="drawingboard"><circle class="d-fill" cx="124" cy="126" r="9"/></g>
+      <text class="d-m" x="20" y="210" text-anchor="start">n-btn-save</text>
+      <rect class="d-plate" x="280" y="20" width="180" height="120" rx="7"/>
+      <text class="d-t" x="296" y="46" text-anchor="start">m-0007.json</text>
+      <text class="d-m" x="296" y="72" text-anchor="start">&quot;node&quot;: &quot;n-btn-save&quot;</text>
+      <text class="d-m" x="296" y="91" text-anchor="start">&quot;kind&quot;: &quot;box&quot;</text>
+      <text class="d-m" x="296" y="110" text-anchor="start">&quot;status&quot;: &quot;open&quot;</text>
+      <rect class="d-plate" x="280" y="240" width="180" height="56" rx="7"/>
+      <text class="d-t" x="370.0" y="273.5" text-anchor="middle">Claude Code</text>
+      <rect class="d-plate" x="20" y="366" width="100" height="40" rx="7"/>
+      <text class="d-t" x="70.0" y="391.5" text-anchor="middle">open</text>
+      <g data-tool="drawingboard">
+      <rect class="d-fill" x="170" y="366" width="130" height="40" rx="7"/>
+      <text class="d-t is-on" x="235.0" y="391.5" text-anchor="middle">addressed</text>
+      </g>
+      <rect class="d-plate" x="350" y="366" width="110" height="40" rx="7"/>
+      <text class="d-t" x="405.0" y="391.5" text-anchor="middle">resolved</text>
+      <text class="d-s is-muted" x="70" y="428" text-anchor="middle">your mark</text>
+      <text class="d-s is-muted" x="235" y="428" text-anchor="middle">Claude, with a reply</text>
+      <text class="d-s is-muted" x="405" y="428" text-anchor="middle">only you</text>
+      <text class="d-m" x="140" y="290" text-anchor="start">patch</text>
+      <path class="d-head" d="M170.0 386.0 L157.0 392.5 L157.0 379.5 Z"/>
+      <path class="d-head" d="M350.0 386.0 L337.0 392.5 L337.0 379.5 Z"/>
+      <path class="d-head" d="M280.0 85.0 L267.0 91.5 L267.0 78.5 Z"/>
+      <path class="d-head" d="M370.0 240.0 L363.5 227.0 L376.5 227.0 Z"/>
+      <path class="d-head" d="M125.0 190.0 L131.5 203.0 L118.5 203.0 Z"/>
+      <path class="d-head" d="M235.0 366.0 L228.5 353.0 L241.5 353.0 Z"/>
+      <g class="d-num"><circle cx="255" cy="85" r="11.5"/><text x="255" y="89.6" text-anchor="middle">1</text></g>
+      <g class="d-num"><circle cx="370" cy="190" r="11.5"/><text x="370" y="194.6" text-anchor="middle">2</text></g>
+      <g class="d-num"><circle cx="200" cy="268" r="11.5"/><text x="200" y="272.6" text-anchor="middle">3</text></g>
+      <g class="d-num"><circle cx="370" cy="318" r="11.5"/><text x="370" y="322.6" text-anchor="middle">4</text></g>
+      <g class="d-num"><circle cx="325" cy="360" r="11.5"/><text x="325" y="364.6" text-anchor="middle">5</text></g>
+    </svg>
+        </figure>
+        <aside class="plate" aria-label="Facts about drawingboard">
+          <dl>
+            <dt>Plugin version</dt><dd>0.1.0</dd>
+            <dt>Runs on</dt><dd>macOS, where it is developed. It should work on Linux. For Windows it is cross-compiled but not run by its author, and the Claude terminal is experimental there.</dd>
+            <dt>Built as</dt><dd>One binary that serves a web UI on 127.0.0.1.</dd>
+            <dt>Claude Code</dt><dd>A skill and four hooks, from the plugin or from <code>drawingboard init</code>. The plugin adds a monitor.</dd>
+            <dt>Storage</dt><dd>Plain JSON files in <code>drawingboard/</code>, committed with your code.</dd>
+            <dt>Licence</dt><dd>Apache-2.0</dd>
+            <dt>Status</dt><dd><span class="badge" data-status="drawingboard">Not public yet</span></dd>
+          </dl>
+        </aside>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="how">
+      <div class="wrap">
+        <h2 id="how">How it works</h2>
+        <ol class="steps">
+          <li>You place a mark on an element: a comment pin, a box or an ellipse, an arrow, a strike, "move this there". It is saved as one file on the element's id, with status <code>open</code>.</li>
+          <li>Claude hears what you changed with your next prompt or, through the plugin's monitor, while it is still working. It reads the open marks with <code>drawingboard marks</code> and the screen as a text outline with <code>drawingboard show</code>.</li>
+          <li>Claude changes the screen with <code>drawingboard patch</code>. The canvas updates live.</li>
+          <li>Claude replies on the mark and sets it to <code>addressed</code>. If it declines, <code>wontfix</code> needs a reply saying why.</li>
+          <li>If you agree, you set it to Resolved. Claude never resolves your marks: the CLI refuses it.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="problem">
+      <div class="wrap split">
+        <h2 id="problem">The problem</h2>
+        <div class="prose">
+          <p>Telling an agent what is wrong with a screen usually takes a screenshot and a paragraph about where to look. A screenshot is pixels. It does not say which element you meant, and it is out of date after the next change.</p>
+          <p>Review comments also need somewhere to live. In a chat they scroll away, and nobody can tell which ones were dealt with.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="does">
+      <div class="wrap split">
+        <h2 id="does">What it does</h2>
+        <div class="prose">
+          <ul>
+            <li><strong>Mockup screens</strong> built from a catalog of typed placeholders for five platforms: macOS, Windows, iOS, Android and web. Architecture diagrams use the same canvas.</li>
+            <li><strong>Marks</strong>: comment pins, boxes and ellipses, arrows, strikes, "move this there", text on the canvas and pen strokes. Each is one file with a status.</li>
+            <li><strong>A watch for your marks</strong>: <code>drawingboard marks --watch</code> waits until you add or change a mark, prints it and exits. The plugin's monitor runs it, so a mark reaches a live session at once.</li>
+            <li><strong>Layouts as hints</strong>: a stack, grid or flex tells Claude how the real app should behave, so it picks the framework's natural equivalent instead of guessing.</li>
+            <li><strong>From mockup to code</strong>: <code>drawingboard handoff</code> prints a build brief for a screen, and <code>drawingboard built</code> records that it is built; <code>show</code> and <code>status</code> then say what changed since.</li>
+            <li><strong>A task board</strong> where each column is a folder and each task is one file. Refs link a task to screens, elements, marks and other tasks.</li>
+            <li><strong>A Claude terminal</strong> docked in the app: a real Claude Code session in your project. "Ask Claude" buttons type a precise reference into it and never press Enter.</li>
+            <li><strong>Checkpoints</strong>: named snapshots of the board that you can diff and restore. In git they are refs of their own and never touch your branch.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="edge">
+      <div class="wrap split">
+        <h2 id="edge">The edge</h2>
+        <div class="prose">
+          <ol>
+            <li><strong>Marks are review data on mockups that exist before any code.</strong> Each has a kind, an element id, a snapshot, replies, and a lifecycle in which Claude may set <code>addressed</code> but never <code>resolved</code>.</li>
+            <li><strong>Typed native screens</strong> for macOS, Windows, iOS and Android, which a "click the running page" tool cannot reach.</li>
+            <li><strong>Claude hears only what you changed</strong>, with your next prompt or, through the plugin's monitor, while Claude is still working.</li>
+            <li><strong>Links from a mockup to the code that implements it</strong>, with drift in both directions.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="compare">
+      <div class="wrap split">
+        <h2 id="compare">How it compares</h2>
+        <div class="prose">
+          <p>drawingboard is a narrow tool: for one developer who builds a native desktop or mobile app (or a web one) with Claude Code and wants to sketch the intent first and review it without screenshots. It works with Claude Code only. Other tools do neighbouring jobs, some of them better.</p>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Tool / What it does better / What drawingboard has that it lacks">
+            <table class="cols-many">
+              <thead><tr><th scope="col">Tool</th><th scope="col">What it does better</th><th scope="col">What drawingboard has that it lacks</th></tr></thead>
+              <tbody>
+              <tr><td data-label="Tool">Claude Design</td><td data-label="What it does better">Generates the design itself, checks it against your brand, exports PDF, PPTX and HTML, and needs no install.</td><td data-label="What drawingboard has that it lacks">It is cloud only and makes hi-fi web output. No catalog of native platforms; comments are not files in your repo.</td></tr>
+              <tr><td data-label="Tool">Agentation</td><td data-label="What it does better">Works on the real, running UI: click an element, write a note. It has an <code>acknowledged</code> state and webhooks, which drawingboard has not.</td><td data-label="What drawingboard has that it lacks">It needs a running React app and is desktop web only, so it does not reach a mockup or a native app.</td></tr>
+              <tr><td data-label="Tool">Pencil</td><td data-label="What it does better">A real design canvas with variables and tokens, a two-way local MCP server, a headless CLI, and many agents.</td><td data-label="What drawingboard has that it lacks">No lifecycle for review marks that could be found. It is centred on the web, and the app is closed.</td></tr>
+              <tr><td data-label="Tool">Backlog.md</td><td data-label="What it does better">The better task board: tasks as files in the repo, a CLI, MCP and a local web kanban, five agents.</td><td data-label="What drawingboard has that it lacks">No mockups and no marks.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>When not to use it</h3>
+          <ul>
+            <li>You want polished web designs made for you. Use Claude Design or Pencil; they go well beside it.</li>
+            <li>You want to point at a running web app. Agentation works on the real page.</li>
+            <li>You only want tasks as files. Backlog.md is the better task board.</li>
+            <li>You work in a team on one board. There are no accounts and no cloud, and you should not run the app on a machine you share.</li>
+            <li>You use another coding agent. It works with Claude Code only.</li>
+          </ul>
+          <p>The plugin's monitor depends on Claude Code monitors, an experimental feature that does not start in <code>-p</code> runs. Where it is missing nothing is lost: the prompt notice reports the same marks with the next prompt.</p>
+          <p><strong>How far this release is tested.</strong> The Go tests, the UI tests and the build pass on Linux, with an older Go than the project asks for. Nothing has been run on macOS or Windows. The plugin, its hooks and the marks monitor have not been tried in a live Claude Code session.</p>
+          <p class="small">Compared on 2026-11-19 from each tool's public page. Other tools change; check before you choose.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="install">
+      <div class="wrap split">
+        <h2 id="install">Install</h2>
+        <div class="prose">
+          <p class="private-note" data-private="drawingboard"><strong>Not public yet.</strong> There is no public repository or release yet. These are the commands as they will be once there is one.</p>
+          <p>Install the binary first. Download it for your platform (macOS or Linux) from the releases, once one is published; the install script picks the right one, checks its checksum and puts it in <code>~/.local/bin</code>:</p>
+          <div class="cmd"><pre><code>curl -fsSL https://github.com/mr-wheelkers/drawingboard/releases/latest/download/install.sh | sh</code></pre></div>
+          <p>Or build it from the repository with Go and Node. Node is only needed to build the UI; the binary embeds it.</p>
+          <div class="cmd"><pre><code>make build<span class="k">       # bin/drawingboard</span>
+make install<span class="k">     # copies it to ~/.local/bin/drawingboard</span></code></pre></div>
+          <p>Then either add the Claude Code plugin, which brings the skill, the hooks and the monitor to every project that has a <code>drawingboard/</code> folder:</p>
+          <div class="cmd"><pre><code>/plugin marketplace add mr-wheelkers/drawingboard
+/plugin install drawingboard@drawingboard</code></pre></div>
+          <p>or let <code>drawingboard init</code> write the skill and the hooks into one project. Use one or the other. The plugin does not contain the binary: its hooks, its skill and its monitor run <code>drawingboard</code> from your PATH.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="quick-start">
+      <div class="wrap split">
+        <h2 id="quick-start">Quick start</h2>
+        <div class="prose">
+          <ol>
+            <li>In your project folder, run <code>drawingboard init</code>. It creates <code>drawingboard/</code> with a sample screen, a sample mark and a sample task, and installs the skill, the <code>CLAUDE.md</code> section and the hooks.</li>
+            <li>Start the app with <code>drawingboard</code> and open <code>http://127.0.0.1:4320</code>.</li>
+            <li>Press <kbd>M</kbd> for mark mode, pick Comment pin (<kbd>C</kbd>) and click a button. Write what you want and save.</li>
+            <li>Open the Claude terminal with <kbd>Ctrl</kbd>+<kbd>&#96;</kbd>. In the Marks tab, click "Ask Claude to address open marks" and press Enter.</li>
+          </ol>
+          <p>What Claude then runs:</p>
+          <figure class="term">
+            <figcaption class="bar"><span>Claude&#x27;s side of a mark</span></figcaption>
+            <pre><code><span class="c">drawingboard marks</span>
+<span class="k"># open marks across the board, one per line</span>
+<span class="c">drawingboard show canvas/demo/prefs-macos.json</span>
+<span class="k"># outline of the screen with marks inline</span>
+<span class="c">drawingboard mark m-0007 addressed "Made it primary and 96px wide"</span>
+<span class="k"># status + reply</span></code></pre>
+          </figure>
+          <p>The <a href="../docs/drawingboard/">drawingboard documentation</a> has the concepts, every command, the Claude Code integration, security and troubleshooting.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>
+        <p>Local tools for working with Claude Code, by Sviatoslav Kolesnyk (<a href="https://github.com/mr-wheelkers">mr-wheelkers</a> on GitHub).</p>
+        <p>Every tool is licensed under Apache-2.0.</p>
+        <p class="small">These are independent tools. Claude Code is a product of Anthropic.</p>
+      </div>
+      <nav aria-label="Tools">
+        <p><strong>Tools</strong></p>
+        <ul><li><a href="../daleq/">daleq</a></li><li><a href="../drawingboard/">drawingboard</a></li><li><a href="../imgcompare/">imgcompare</a></li><li><a href="../godot-pilot/">godot-pilot</a></li><li><a href="../simq/">simq</a></li></ul>
+      </nav>
+      <nav aria-label="Documentation">
+        <p><strong>Documentation</strong></p>
+        <ul><li><a href="../docs/daleq/">daleq</a></li><li><a href="../docs/drawingboard/">drawingboard</a></li><li><a href="../docs/imgcompare/">imgcompare</a></li><li><a href="../docs/godot-pilot/">godot-pilot</a></li><li><a href="../docs/simq/">simq</a></li></ul>
+      </nav>
+    </div>
+  </footer>
+  <script src="../assets/tools.js"></script>
+  <script src="../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>godot-pilot: a test and debug harness for Godot .NET</title>
+  <meta name="description" content="godot-pilot lets Claude Code drive a Godot .NET game and editor frame by frame, deterministically, and proves none of it ships. macOS and C# only.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect x='1.0' y='5' width='5' height='24' fill='%23F2B416'/%3E%3Crect x='7.6' y='5' width='5' height='24' fill='%232B66D9'/%3E%3Crect x='14.2' y='5' width='5' height='24' fill='%23C92A74'/%3E%3Crect x='20.8' y='5' width='5' height='24' fill='%230B7A6F'/%3E%3Crect x='27.4' y='5' width='5' height='24' fill='%23E8692F'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body data-tool="godot-pilot">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="../"><svg class="rack" viewBox="0 0 34 22" aria-hidden="true" focusable="false"><rect x="1.0" y="12" width="5" height="9" fill="#F2B416"/><rect x="7.6" y="12" width="5" height="9" fill="#2B66D9"/><rect x="14.2" y="12" width="5" height="9" fill="#C92A74"/><rect x="20.8" y="1" width="5" height="20" fill="#0B7A6F"/><rect x="27.4" y="12" width="5" height="9" fill="#E8692F"/></svg><span>mr-wheelkers tools</span></a>
+      <nav class="site-nav" aria-label="Site">
+        <ul>
+        <li data-tool="daleq"><a href="../daleq/">daleq</a></li>
+        <li data-tool="drawingboard"><a href="../drawingboard/">drawingboard</a></li>
+        <li data-tool="imgcompare"><a href="../imgcompare/">imgcompare</a></li>
+        <li data-tool="godot-pilot"><a href="../godot-pilot/" aria-current="page">godot-pilot</a></li>
+        <li data-tool="simq"><a href="../simq/">simq</a></li>
+        <li class="docs-link"><a href="../docs/">Docs</a></li>
+        </ul>
+      </nav>
+      <button class="theme-btn" type="button" hidden>Dark theme</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero tool-hero">
+      <div class="wrap hero-grid">
+        <div class="hero-text">
+          <h1>godot-pilot</h1>
+          <p class="lede">A deterministic test and debug harness that lets Claude drive a Godot .NET game and the Godot editor frame by frame, and proves none of it ships. macOS and C# only.</p>
+          <p class="status-line"><span class="badge" data-status="godot-pilot">Not public yet</span> <a href="../docs/godot-pilot/">Read the documentation</a> <a data-repo="godot-pilot" href="#" hidden>Source on GitHub</a></p>
+        </div>
+        <figure class="hero-figure">
+    <svg viewBox="0 0 480 478" role="img" aria-labelledby="loop-t loop-d">
+      <title id="loop-t">A godot-pilot scenario run</title>
+      <desc id="loop-d">Claude Code calls the pilot CLI. The CLI launches the game and talks to the harness inside it over a loopback socket with a per-run token. The game advances only when stepped: input, step frames, assert state, take a shot. A failure leaves a bundle in the run folder. Jev is optional and outside your machine; only seeded screenshots are sent to it.</desc>
+      <path class="d-flow" d="M99.0 80.0 L99.0 123.0"/>
+      <path class="d-pulse" d="M99.0 80.0 L99.0 123.0"/>
+      <path class="d-flow" d="M174.0 155.0 L200.0 155.0 Q212.0 155.0 212.0 167.0 L212.0 181.0 Q212.0 193.0 224.0 193.0 L257.0 193.0"/>
+      <path class="d-pulse" d="M174.0 155.0 L200.0 155.0 Q212.0 155.0 212.0 167.0 L212.0 181.0 Q212.0 193.0 224.0 193.0 L257.0 193.0"/>
+      <path class="d-flow" d="M415.0 220.0 L415.0 275.0"/>
+      <path class="d-pulse" d="M415.0 220.0 L415.0 275.0"/>
+      <path class="d-flow is-dashed" d="M323.0 314.0 L323.0 411.0"/>
+      <rect class="d-bound" x="8" y="8" width="464" height="380" rx="14"/>
+      <rect class="d-plate" x="24" y="30" width="150" height="50" rx="7"/>
+      <text class="d-t" x="99.0" y="60.5" text-anchor="middle">Claude Code</text>
+      <rect class="d-fill" x="24" y="130" width="150" height="50" rx="7"/>
+      <text class="d-t is-on" x="99.0" y="160.5" text-anchor="middle">pilot CLI</text>
+      <rect class="d-plate" x="250" y="30" width="206" height="190" rx="9"/>
+      <path class="d-line" d="M250 56 H456"/>
+      <text class="d-s" x="264" y="48" text-anchor="start">your game</text>
+      <rect class="d-soft" x="264" y="68" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="290" y="68" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="316" y="68" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="342" y="68" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="368" y="68" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="394" y="68" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="420" y="68" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="264" y="94" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="290" y="94" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="316" y="94" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="342" y="94" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="368" y="94" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="394" y="94" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="420" y="94" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="264" y="120" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="290" y="120" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="316" y="120" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="342" y="120" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="368" y="120" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="394" y="120" width="22" height="22" rx="2"/>
+      <rect class="d-soft" x="420" y="120" width="22" height="22" rx="2"/>
+      <rect class="d-fill" x="290" y="94" width="22" height="22" rx="2"/>
+      <circle class="d-plate" cx="379" cy="79" r="6"/>
+      <circle class="d-plate" cx="431" cy="131" r="6"/>
+      <rect class="d-fill" x="264" y="178" width="110" height="30" rx="5"/>
+      <text class="d-t is-on" x="319.0" y="198.5" text-anchor="middle">harness</text>
+      <rect class="d-plate" x="24" y="282" width="46" height="32" rx="0"/>
+      <text class="d-m" x="47" y="303" text-anchor="middle">0</text>
+      <rect class="d-fill" x="70" y="282" width="46" height="32" rx="0"/>
+      <text class="d-m is-on" x="93" y="303" text-anchor="middle">1</text>
+      <text class="d-s" x="93" y="272" text-anchor="middle">input</text>
+      <rect class="d-plate" x="116" y="282" width="46" height="32" rx="0"/>
+      <text class="d-m" x="139" y="303" text-anchor="middle">2</text>
+      <rect class="d-plate" x="162" y="282" width="46" height="32" rx="0"/>
+      <text class="d-m" x="185" y="303" text-anchor="middle">3</text>
+      <rect class="d-fill" x="208" y="282" width="46" height="32" rx="0"/>
+      <text class="d-m is-on" x="231" y="303" text-anchor="middle">4</text>
+      <text class="d-s" x="231" y="272" text-anchor="middle">assert</text>
+      <rect class="d-plate" x="254" y="282" width="46" height="32" rx="0"/>
+      <text class="d-m" x="277" y="303" text-anchor="middle">5</text>
+      <rect class="d-fill" x="300" y="282" width="46" height="32" rx="0"/>
+      <text class="d-m is-on" x="323" y="303" text-anchor="middle">6</text>
+      <text class="d-s" x="323" y="272" text-anchor="middle">shot</text>
+      <rect class="d-plate" x="346" y="282" width="46" height="32" rx="0"/>
+      <text class="d-m" x="369" y="303" text-anchor="middle">7</text>
+      <rect class="d-plate" x="392" y="282" width="46" height="32" rx="0"/>
+      <text class="d-m" x="415" y="303" text-anchor="middle">8</text>
+      <text class="d-s is-muted" x="24" y="246" text-anchor="start">frames, one step at a time</text>
+      <rect class="d-plate" x="24" y="336" width="200" height="38" rx="7"/>
+      <text class="d-m" x="124" y="360" text-anchor="middle">.pilot/runs/&lt;run-id&gt;/</text>
+      <rect class="d-plate" x="250" y="418" width="206" height="52" rx="7"/>
+      <text class="d-t" x="353.0" y="441.0" text-anchor="middle">Jev (TypeSafe AI)</text>
+      <text class="d-s" x="353.0" y="459.0" text-anchor="middle">optional, paid</text>
+      <text class="d-s is-muted" x="24" y="412" text-anchor="start">outside your machine</text>
+      <path class="d-head" d="M99.0 130.0 L92.5 117.0 L105.5 117.0 Z"/>
+      <path class="d-head" d="M264.0 193.0 L251.0 199.5 L251.0 186.5 Z"/>
+      <path class="d-head" d="M415.0 282.0 L408.5 269.0 L421.5 269.0 Z"/>
+      <path class="d-head" d="M323.0 418.0 L316.5 405.0 L329.5 405.0 Z"/>
+      <g class="d-num"><circle cx="99" cy="104" r="11.5"/><text x="99" y="108.6" text-anchor="middle">1</text></g>
+      <g class="d-num"><circle cx="212" cy="172" r="11.5"/><text x="212" y="176.6" text-anchor="middle">2</text></g>
+      <g class="d-num"><circle cx="415" cy="250" r="11.5"/><text x="415" y="254.6" text-anchor="middle">3</text></g>
+      <g class="d-num"><circle cx="242" cy="355" r="11.5"/><text x="242" y="359.6" text-anchor="middle">4</text></g>
+      <g class="d-num"><circle cx="323" cy="402" r="11.5"/><text x="323" y="406.6" text-anchor="middle">5</text></g>
+    </svg>
+        </figure>
+        <aside class="plate" aria-label="Facts about godot-pilot">
+          <dl>
+            <dt>Runs on</dt><dd>macOS. Windows and Linux are the design target, not yet verified.</dd>
+            <dt>Needs</dt><dd>Godot 4.7.2 .NET and a C# project. GDScript projects are out of scope.</dd>
+            <dt>Claude Code</dt><dd>The <code>pilot</code> CLI. There is no MCP server.</dd>
+            <dt>Jev</dt><dd>Optional and paid (TypeSafe AI). Only for what engine state cannot answer.</dd>
+            <dt>Licence</dt><dd>Apache-2.0</dd>
+            <dt>Status</dt><dd><span class="badge" data-status="godot-pilot">Not public yet</span></dd>
+          </dl>
+        </aside>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="how">
+      <div class="wrap">
+        <h2 id="how">How it works</h2>
+        <ol class="steps">
+          <li>Claude runs a <code>pilot</code> command, for example <code>pilot scenario run demo/scenarios/&lt;name&gt;.json</code>.</li>
+          <li>The CLI builds and launches the game and connects to the harness inside it. Harness ports are bound to localhost only, with a per-session token.</li>
+          <li>The game advances only when stepped. A scenario loads a fixture, sends input, steps N frames, asserts state and takes shots, with a fixed timestep, a seeded RNG and an injectable clock.</li>
+          <li>Success is exit 0 and no output. A failure is at most 10 lines naming the failed step and the bundle path, under <code>.pilot/runs/&lt;run-id&gt;/</code>.</li>
+          <li>Optional: Jev answers what engine state cannot, such as "is a dialog open". Only screenshots of seeded game content leave the machine.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="problem">
+      <div class="wrap split">
+        <h2 id="problem">The problem</h2>
+        <div class="prose">
+          <p>An agent that writes a game cannot see it run. Playing through menus to reach a state is slow. A free-running game gives a different result each time, so a failure cannot be repeated. And a test harness left in the project can ship to players.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="does">
+      <div class="wrap split">
+        <h2 id="does">What it does</h2>
+        <div class="prose">
+          <ul>
+            <li><strong>Drives the running game</strong>: input (including scroll and window resize), frame stepping, screenshots, state get and set, and live C# eval with <code>pilot eval</code>.</li>
+            <li><strong>A testbed</strong>: fixtures (a scene plus serialized state), scenarios, record and replay with checkpoint hashes, and exploratory runs that look for soft-locks.</li>
+            <li><strong>Drives the editor</strong> with <code>pilot editor</code>: UI tree, input, scene open and save, node properties, live eval, and playing the game from the editor with the harness attached.</li>
+            <li><strong>Reads and changes any setting</strong> with <code>pilot settings</code>, adds and removes plugins with <code>pilot plugin</code>, and runs sanity checks with <code>pilot doctor</code>.</li>
+            <li><strong>Checks and renders shaders</strong> with <code>pilot shader</code>.</li>
+            <li><strong>Nine Roslyn analyzers</strong> for Godot pitfalls, from string <code>GetNode</code> paths (GP0001) to wall-clock time and unseeded randomness (GP0013).</li>
+            <li><strong>Breakpoints in C#</strong> through netcoredbg with <code>pilot debug</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="edge">
+      <div class="wrap split">
+        <h2 id="edge">The edge</h2>
+        <div class="prose">
+          <ol>
+            <li><strong>A determinism contract across the stack.</strong> Fixed timestep, seed and injectable clock, checkpoint hashes with desync reports, a gate that runs every scenario twice, and an analyzer that fails the build on wall-clock time or unseeded randomness.</li>
+            <li><strong>Proof that nothing ships.</strong> The harness compiles only under <code>GODOT_PILOT</code>, editor-side code also sits inside <code>#if TOOLS</code>, and a release gate proves it for any project.</li>
+            <li><strong>C# all the way.</strong> Live C# eval in the running game and in the editor, netcoredbg breakpoints, and analyzers written for Godot's C# API.</li>
+            <li><strong>Output made for an agent.</strong> Failures and diffs only, one failure bundle, a reversible <code>pilot init</code>, and launches that do not take keyboard focus on macOS.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="compare">
+      <div class="wrap split">
+        <h2 id="compare">How it compares</h2>
+        <div class="prose">
+          <p>"AI drives Godot" is a crowded field: at least 15 servers were found, and input, screenshots, UI trees and record and replay are free or cheap elsewhere. As a general Godot MCP alternative godot-pilot is redundant. It is different as a deterministic test and debug harness for Godot .NET, which is a niche inside a niche.</p>
+          <h3>When not to use it</h3>
+          <ul>
+            <li>Your project is in GDScript. The harness is C# and needs a .NET game assembly.</li>
+            <li>You are on Windows or Linux. They are designed for, not verified.</li>
+            <li>You are on another Godot version. It is built and pinned to Godot 4.7.2 .NET.</li>
+            <li>You want an MCP server. There is none: the <code>pilot</code> CLI is the one interface.</li>
+            <li>You mainly want the agent to author scenes in the editor. godot-ai has far more authoring tools.</li>
+            <li>You need gamepad, touch or trackpad gestures. They are still to do; Beckett has gamepad and touch.</li>
+            <li>You need a sandbox. Builds, the game and the editor run as your own user.</li>
+          </ul>
+          <p>Jev is one optional vendor. Without it, Jev steps report <code>skipped</code> (exit 6), never a pass.</p>
+          <p class="small">Compared on 2026-11-19 from each tool's public page. Other tools change; check before you choose.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="install">
+      <div class="wrap split">
+        <h2 id="install">Install</h2>
+        <div class="prose">
+          <p class="private-note" data-private="godot-pilot"><strong>Not public yet.</strong> The repository is private today, so there is nothing to check out yet. This is how it will work once it is public.</p>
+          <p>There is no packaged installer or plugin yet. <code>pilot</code> is run from a checkout of the repository, and another Godot .NET project adopts it with <code>pilot init</code>.</p>
+          <div class="cmd"><pre><code>pilot init --project &lt;dir&gt;</code></pre></div>
+          <p>The steps print one line each, then <code>pilot doctor</code> runs. Afterwards <code>git status</code> of the project shows only the csproj block, the export filters, <code>.gitignore</code> and <code>.pilot/config.json</code>. A second <code>init</code> changes nothing, and <code>pilot init --remove</code> takes it all out again.</p>
+          <p>Before any export, run <code>scripts/release-gate.sh --project &lt;dir/game&gt;</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="quick-start">
+      <div class="wrap split">
+        <h2 id="quick-start">Quick start</h2>
+        <div class="prose">
+          <figure class="term">
+            <figcaption class="bar"><span>drive a running game</span></figcaption>
+            <pre><code><span class="c">pilot run --scene Room</span>
+<span class="c">pilot step 5</span>
+<span class="c">pilot get &lt;path&gt;</span>
+<span class="c">pilot eval "GetTree().CurrentScene.Name"</span>
+<span class="c">pilot shot</span>
+<span class="c">pilot stop</span></code></pre>
+          </figure>
+          <p>Run a scenario and get failures only:</p>
+          <figure class="term">
+            <figcaption class="bar"><span>a scenario run</span></figcaption>
+            <pre><code><span class="c">pilot scenario run demo/scenarios/&lt;name&gt;.json</span></code></pre>
+          </figure>
+          <p>Success is exit 0 and no output.</p>
+          <p>The <a href="../docs/godot-pilot/">godot-pilot documentation</a> has the concepts, every command, the Claude Code integration, security and troubleshooting.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>
+        <p>Local tools for working with Claude Code, by Sviatoslav Kolesnyk (<a href="https://github.com/mr-wheelkers">mr-wheelkers</a> on GitHub).</p>
+        <p>Every tool is licensed under Apache-2.0.</p>
+        <p class="small">These are independent tools. Claude Code is a product of Anthropic.</p>
+      </div>
+      <nav aria-label="Tools">
+        <p><strong>Tools</strong></p>
+        <ul><li><a href="../daleq/">daleq</a></li><li><a href="../drawingboard/">drawingboard</a></li><li><a href="../imgcompare/">imgcompare</a></li><li><a href="../godot-pilot/">godot-pilot</a></li><li><a href="../simq/">simq</a></li></ul>
+      </nav>
+      <nav aria-label="Documentation">
+        <p><strong>Documentation</strong></p>
+        <ul><li><a href="../docs/daleq/">daleq</a></li><li><a href="../docs/drawingboard/">drawingboard</a></li><li><a href="../docs/imgcompare/">imgcompare</a></li><li><a href="../docs/godot-pilot/">godot-pilot</a></li><li><a href="../docs/simq/">simq</a></li></ul>
+      </nav>
+    </div>
+  </footer>
+  <script src="../assets/tools.js"></script>
+  <script src="../assets/site.js"></script>
+</body>
+</html>

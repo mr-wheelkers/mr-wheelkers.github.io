@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>simq documentation</title>
+  <meta name="description" content="Install, quick start, concepts, commands, Claude Code integration, safety and troubleshooting for simq, the iOS simulator test queue.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect x='1.0' y='5' width='5' height='24' fill='%23F2B416'/%3E%3Crect x='7.6' y='5' width='5' height='24' fill='%232B66D9'/%3E%3Crect x='14.2' y='5' width='5' height='24' fill='%23C92A74'/%3E%3Crect x='20.8' y='5' width='5' height='24' fill='%230B7A6F'/%3E%3Crect x='27.4' y='5' width='5' height='24' fill='%23E8692F'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body data-tool="simq">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="../../"><svg class="rack" viewBox="0 0 34 22" aria-hidden="true" focusable="false"><rect x="1.0" y="12" width="5" height="9" fill="#F2B416"/><rect x="7.6" y="12" width="5" height="9" fill="#2B66D9"/><rect x="14.2" y="12" width="5" height="9" fill="#C92A74"/><rect x="20.8" y="12" width="5" height="9" fill="#0B7A6F"/><rect x="27.4" y="1" width="5" height="20" fill="#E8692F"/></svg><span>mr-wheelkers tools</span></a>
+      <nav class="site-nav" aria-label="Site">
+        <ul>
+        <li data-tool="daleq"><a href="../../daleq/">daleq</a></li>
+        <li data-tool="drawingboard"><a href="../../drawingboard/">drawingboard</a></li>
+        <li data-tool="imgcompare"><a href="../../imgcompare/">imgcompare</a></li>
+        <li data-tool="godot-pilot"><a href="../../godot-pilot/">godot-pilot</a></li>
+        <li data-tool="simq"><a href="../../simq/">simq</a></li>
+        <li class="docs-link"><a href="../../docs/" aria-current="page">Docs</a></li>
+        </ul>
+      </nav>
+      <button class="theme-btn" type="button" hidden>Dark theme</button>
+    </div>
+  </header>
+
+  <div class="wrap docs">
+    <aside class="docs-side">
+      <nav aria-label="On this page">
+        <p class="side-title">On this page</p>
+        <ul>
+            <li><a href="#install">Install</a></li>
+            <li><a href="#quick-start">Quick start</a></li>
+            <li><a href="#concepts">Concepts</a></li>
+            <li><a href="#commands">Command reference</a></li>
+            <li><a href="#claude-code">Claude Code integration</a></li>
+            <li><a href="#security">Security and privacy</a></li>
+            <li><a href="#troubleshooting">Troubleshooting</a></li>
+        </ul>
+      </nav>
+      <nav class="others" aria-label="Documentation for each tool">
+        <p class="side-title">Documentation</p>
+        <ul>
+            <li data-tool="daleq"><a href="../daleq/">daleq</a></li>
+            <li data-tool="drawingboard"><a href="../drawingboard/">drawingboard</a></li>
+            <li data-tool="imgcompare"><a href="../imgcompare/">imgcompare</a></li>
+            <li data-tool="godot-pilot"><a href="../godot-pilot/">godot-pilot</a></li>
+            <li data-tool="simq"><a href="../simq/" aria-current="page">simq</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main id="main" class="docs-main">
+      <h1>simq documentation</h1>
+      <p class="lede">simq is a queue for iOS simulator tests. Any number of sessions (people, scripts, Claude Code agents) submit a test run; an always-on harness runs them one per simulator, with warm DerivedData, and hands back the result. It is being folded into daleq's iOS plugin, which reads the same <code>.simq.toml</code>.</p>
+      <p class="status-line"><span class="badge" data-status="simq">Not public yet</span> <a href="../../simq/">About simq</a> <a data-repo="simq" href="#" hidden>Source on GitHub</a></p>
+        <section aria-labelledby="install">
+          <h2 id="install"><a href="#install">Install</a></h2>
+          <p class="private-note" data-private="simq"><strong>Not public yet.</strong> The repository is private today. These are the commands as they will be once it is public.</p>
+          <p>Needs Xcode (tested with 26.6) and at least one iOS simulator runtime.</p>
+          <p>As a Claude Code plugin:</p>
+          <div class="cmd"><pre><code>/plugin marketplace add mr-wheelkers/simq
+/plugin install simq@simq
+/simq-setup</code></pre></div>
+          <p>Or run the installer in a checkout of the repository:</p>
+          <div class="cmd"><pre><code>scripts/install.sh<span class="k">                 # or: scripts/install.sh --workers 3 --model "iPhone 17" --runtime 26.5</span></code></pre></div>
+          <p>This builds a release binary, copies it to <code>~/Library/Application Support/simq/bin/simq</code>, links <code>~/.local/bin/simq</code>, writes the launchd agents for the broker and the workers, starts them, and runs <code>simq doctor</code>. Run it again to update.</p>
+          <p>The first start takes a few minutes: the workers create <code>simq-golden</code>, boot it once (a new simulator's first boot runs a data migration), and clone <code>simq-1…N</code> from it.</p>
+          <p><code>simq uninstall [--delete-simulators] [--purge]</code> removes it.</p>
+        </section>
+        <section aria-labelledby="quick-start">
+          <h2 id="quick-start"><a href="#quick-start">Quick start</a></h2>
+          <div class="cmd"><pre><code>simq submit --wait<span class="k">                                # all tests of the project in the current directory</span>
+simq submit ~/src/App --wait --kind unit<span class="k">          # unit test bundles only</span>
+simq submit --wait --only AppTests/ParserTests --only AppUITests/LoginTests/testLogin
+simq submit --wait --shards 2<span class="k">                     # split by test class over 2 workers, one merged result</span>
+simq submit --wait --json<span class="k">                         # job + result as JSON</span>
+simq submit<span class="k">                                       # queue and print the id; later: simq wait ID</span></code></pre></div>
+          <p><code>simq submit --wait</code> from an iOS project builds if needed, tests, prints the result and exits with a code that says what happened.</p>
+        </section>
+        <section aria-labelledby="concepts">
+          <h2 id="concepts"><a href="#concepts">Concepts</a></h2>
+          <h3>Broker</h3>
+          <p>The broker (<code>simq broker</code>, launchd <code>dev.simq.broker</code>) owns the queue on disk, hands jobs out as leases, re-queues a job when its worker stops heart-beating, gives up after 3 attempts, and stores results. Clients only talk to the broker.</p>
+          <h3>Workers</h3>
+          <p>There is one worker per simulator (<code>simq worker N</code>). A worker claims a job, then:</p>
+          <ol>
+            <li>runs the project's <code>generate</code> hook (for example <code>xcodegen</code>) and <code>xcodebuild build-for-testing</code> into a DerivedData directory per project. This is skipped when the source fingerprint (git tree + dirty diff + untracked files, or file mtimes outside git), Xcode build and settings are unchanged since the last build;</li>
+            <li>runs <code>xcodebuild test-without-building -xctestrun …</code> on its own simulator, with parallel testing off and per-test timeouts on, so a hanging test fails instead of hanging the run;</li>
+            <li>reads <code>xcresulttool get test-results summary</code> into pass and fail counts, failing tests with messages, timings and artifact paths.</li>
+          </ol>
+          <h3>Self-healing</h3>
+          <ul>
+            <li>Wall-clock timeouts for build and tests; the whole xcodebuild process group is killed.</li>
+            <li>A run without results is retried once after rebooting the simulator.</li>
+            <li>Booting escalates: reboot, erase, then delete and re-clone from <code>simq-golden</code>.</li>
+            <li>A restarted worker kills what its previous self left running and re-sends an undelivered result. launchd restarts crashed daemons.</li>
+          </ul>
+          <h3>Golden simulator</h3>
+          <p>A new simulator's first boot runs a data migration that can take minutes. simq boots <code>simq-golden</code> once and clones worker simulators from it; clones boot in well under a minute.</p>
+          <h3>Why parallel testing is off</h3>
+          <p>With xcodebuild's default, the small app's run cloned the destination three times and took 146s instead of 76s. Parallelism comes from the pool: one job per simulator, several simulators.</p>
+          <h3>Sharding</h3>
+          <p>With <code>--shards N</code>, the worker that claims the job builds it, lists its tests, and deals the test classes into N groups, slowest first onto the lightest group, using per-class durations recorded from earlier runs. Any worker takes the shards, and the parent's result is the merge: counts summed, failures concatenated, test time = the slowest shard.</p>
+          <h3>Snapshot mode</h3>
+          <p>DerivedData is per project path, so every new worktree of a repository would build cold. With <code>snapshot = true</code>, a job carries the commit plus a patch of the dirty tree, and the worker applies it in one simq-owned checkout per repository, shared by all worktrees.</p>
+          <h3>One build at a time</h3>
+          <p>Builds are serialised per project with a file lock: exclusive while building, shared while tests read the products, so two workers on one project build once.</p>
+          <h3>Measured</h3>
+          <p>On an Apple Silicon MacBook Air, Xcode 26.6, iOS 26.5, iPhone 17 simulator, wall-clock seconds:</p>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Step / Small app (5 tests) / Large app (417 tests, 41 UI)">
+            <table class="cols-many">
+              <thead><tr><th scope="col">Step</th><th scope="col">Small app (5 tests)</th><th scope="col">Large app (417 tests, 41 UI)</th></tr></thead>
+              <tbody>
+              <tr><td data-label="Step"><code>build-for-testing</code>, empty DerivedData</td><td data-label="Small app (5 tests)">9s</td><td data-label="Large app (417 tests, 41 UI)">307s</td></tr>
+              <tr><td data-label="Step"><code>build-for-testing</code>, warm, nothing changed</td><td data-label="Small app (5 tests)">2s</td><td data-label="Large app (417 tests, 41 UI)">42s; simq skips this entirely</td></tr>
+              <tr><td data-label="Step"><code>build-for-testing</code>, warm, one file touched</td><td data-label="Small app (5 tests)">–</td><td data-label="Large app (417 tests, 41 UI)">65s</td></tr>
+              <tr><td data-label="Step"><code>test-without-building</code>, unit bundle only</td><td data-label="Small app (5 tests)">13s</td><td data-label="Large app (417 tests, 41 UI)">40s</td></tr>
+              <tr><td data-label="Step"><code>test-without-building</code>, everything</td><td data-label="Small app (5 tests)">76s</td><td data-label="Large app (417 tests, 41 UI)">869s</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section aria-labelledby="commands">
+          <h2 id="commands"><a href="#commands">Command reference</a></h2>
+          <div class="cmd"><pre><code>simq submit --wait<span class="k">                                # all tests of the project in the current directory</span>
+simq status [ID]<span class="k">                                  # workers, queue, recent results / one job</span>
+simq log ID [--build] [--follow]
+simq cancel ID
+simq prune [--days 7] [--derived-days 14] [--dry-run]<span class="k">   # the broker also does this every 6h</span>
+simq doctor [--fix]</code></pre></div>
+          <h3>Exit codes</h3>
+          <p>Exit codes of <code>submit --wait</code> / <code>wait</code>: 0 passed, 1 tests failed, 2 build failed, 3 timeout, 4 infrastructure error, 5 cancelled, 64 usage.</p>
+          <h3>Project settings: `.simq.toml`</h3>
+          <p>Optional; looked up from the submit directory to the git root. Without it simq uses the single <code>.xcworkspace</code>/<code>.xcodeproj</code> in the directory and a scheme of the same name.</p>
+          <div class="cmd"><pre><code>workdir = "ios"<span class="k">                    # where xcodebuild runs, relative to this file</span>
+project = "App.xcodeproj"<span class="k">          # or: workspace = "App.xcworkspace"</span>
+scheme = "App"
+test_plan = "Fast"
+generate = "xcodegen"<span class="k">              # run before a build (only when one is needed)</span>
+skip = ["AppUITests/SlowTests"]<span class="k">    # default skips, dropped when --only is given</span>
+device = "iPhone 17"
+runtime = "26.5"
+timeout = 1800<span class="k">                     # test run wall clock, seconds</span>
+build_timeout = 3600
+test_timeout = 600<span class="k">                 # per test (XCTest rounds up to minutes)</span>
+shards = 2<span class="k">                         # split each run over up to 2 workers by test class</span></code></pre></div>
+          <h3>Pool settings</h3>
+          <p><code>~/Library/Application Support/simq/config.json</code> is written by the installer; <code>simq config</code> prints it. Keys: <code>workers</code>, <code>model</code>, <code>runtime</code> (null = newest), <code>leaseSeconds</code> (30), <code>maxConcurrentBuilds</code> (1), <code>allowSimulatorServiceRestart</code> (false), <code>pruneResultDays</code> (7), <code>pruneDerivedDays</code> (14), <code>pruneIntervalHours</code> (6), <code>diskWarnGB</code> (60). Restart the agents after editing: run <code>scripts/install.sh</code> again.</p>
+          <p><code>SIMQ_HOME</code> moves everything (queue, DerivedData, artifacts, socket); <code>SIMQ_SOCKET</code> moves only the socket.</p>
+        </section>
+        <section aria-labelledby="claude-code">
+          <h2 id="claude-code"><a href="#claude-code">Claude Code integration</a></h2>
+          <p>The repository is a Claude Code plugin and a one-plugin marketplace. The plugin gives sessions:</p>
+          <ul>
+            <li>a skill: when and how to submit, and how to read results;</li>
+            <li><code>/simq-status</code>;</li>
+            <li><code>/simq-setup</code>: install, update, doctor, uninstall.</li>
+          </ul>
+          <h3>simq and daleq</h3>
+          <p>daleq's iOS plugin is the tool that replaces simq. It reads the same <code>.simq.toml</code>, its simulators keep the <code>simq-</code> names, and it adds iPad and Apple Watch pools, leases for hands-on work and progress counts. See the <a href="../daleq/#concepts">daleq documentation</a>.</p>
+        </section>
+        <section aria-labelledby="security">
+          <h2 id="security"><a href="#security">Security and privacy</a></h2>
+          <ul>
+            <li>Only <code>simq-*</code> simulators are ever booted, erased, cloned or deleted.</li>
+            <li>Clients talk to the broker over a Unix socket on the same Mac. Multi-machine is not built.</li>
+            <li>Restarting CoreSimulatorService disturbs every simulator, so simq does it only if <code>allowSimulatorServiceRestart</code> is set. It is off by default.</li>
+            <li>In snapshot mode the patch of the dirty tree is built in a temporary index and object directory, so the submitter's repository is never written to.</li>
+            <li>State lives in <code>~/Library/Application Support/simq/</code>: the queue, results, DerivedData and artifacts. <code>simq prune</code> removes old results and DerivedData, and the broker also does this every 6h.</li>
+          </ul>
+        </section>
+        <section aria-labelledby="troubleshooting">
+          <h2 id="troubleshooting"><a href="#troubleshooting">Troubleshooting</a></h2>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Symptom / What to do">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Symptom</th><th scope="col">What to do</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Symptom">The first run after install is slow</td><td data-label="What to do">The first start takes a few minutes while the workers create and boot <code>simq-golden</code>.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">Something is wrong with the pool</td><td data-label="What to do"><code>simq doctor [--fix]</code>.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">A build failed (exit 2)</td><td data-label="What to do">Read the build log: <code>simq log ID [--build] [--follow]</code>.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">Exit 3</td><td data-label="What to do">A wall-clock timeout. Raise <code>timeout</code>, <code>build_timeout</code> or <code>test_timeout</code> in <code>.simq.toml</code> if the run is legitimately long.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">Exit 4</td><td data-label="What to do">An infrastructure error, not a test failure. <code>simq status [ID]</code> shows the workers.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">Every run rebuilds</td><td data-label="What to do">Generated projects (<code>generate</code>) should be git-ignored, or regenerating them changes the fingerprint.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">The disk is filling up</td><td data-label="What to do"><code>simq doctor</code> warns above <code>diskWarnGB</code>. <code>simq prune [--days 7] [--derived-days 14] [--dry-run]</code> cleans up.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">A config change had no effect</td><td data-label="What to do">Restart the agents after editing: run <code>scripts/install.sh</code> again.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+    </main>
+  </div>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>
+        <p>Local tools for working with Claude Code, by Sviatoslav Kolesnyk (<a href="https://github.com/mr-wheelkers">mr-wheelkers</a> on GitHub).</p>
+        <p>Every tool is licensed under Apache-2.0.</p>
+        <p class="small">These are independent tools. Claude Code is a product of Anthropic.</p>
+      </div>
+      <nav aria-label="Tools">
+        <p><strong>Tools</strong></p>
+        <ul><li><a href="../../daleq/">daleq</a></li><li><a href="../../drawingboard/">drawingboard</a></li><li><a href="../../imgcompare/">imgcompare</a></li><li><a href="../../godot-pilot/">godot-pilot</a></li><li><a href="../../simq/">simq</a></li></ul>
+      </nav>
+      <nav aria-label="Documentation">
+        <p><strong>Documentation</strong></p>
+        <ul><li><a href="../../docs/daleq/">daleq</a></li><li><a href="../../docs/drawingboard/">drawingboard</a></li><li><a href="../../docs/imgcompare/">imgcompare</a></li><li><a href="../../docs/godot-pilot/">godot-pilot</a></li><li><a href="../../docs/simq/">simq</a></li></ul>
+      </nav>
+    </div>
+  </footer>
+  <script src="../../assets/tools.js"></script>
+  <script src="../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>imgcompare documentation</title>
+  <meta name="description" content="Install, quick start, concepts, commands, Claude Code integration, security and troubleshooting for imgcompare.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect x='1.0' y='5' width='5' height='24' fill='%23F2B416'/%3E%3Crect x='7.6' y='5' width='5' height='24' fill='%232B66D9'/%3E%3Crect x='14.2' y='5' width='5' height='24' fill='%23C92A74'/%3E%3Crect x='20.8' y='5' width='5' height='24' fill='%230B7A6F'/%3E%3Crect x='27.4' y='5' width='5' height='24' fill='%23E8692F'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body data-tool="imgcompare">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="../../"><svg class="rack" viewBox="0 0 34 22" aria-hidden="true" focusable="false"><rect x="1.0" y="12" width="5" height="9" fill="#F2B416"/><rect x="7.6" y="12" width="5" height="9" fill="#2B66D9"/><rect x="14.2" y="1" width="5" height="20" fill="#C92A74"/><rect x="20.8" y="12" width="5" height="9" fill="#0B7A6F"/><rect x="27.4" y="12" width="5" height="9" fill="#E8692F"/></svg><span>mr-wheelkers tools</span></a>
+      <nav class="site-nav" aria-label="Site">
+        <ul>
+        <li data-tool="daleq"><a href="../../daleq/">daleq</a></li>
+        <li data-tool="drawingboard"><a href="../../drawingboard/">drawingboard</a></li>
+        <li data-tool="imgcompare"><a href="../../imgcompare/">imgcompare</a></li>
+        <li data-tool="godot-pilot"><a href="../../godot-pilot/">godot-pilot</a></li>
+        <li data-tool="simq"><a href="../../simq/">simq</a></li>
+        <li class="docs-link"><a href="../../docs/" aria-current="page">Docs</a></li>
+        </ul>
+      </nav>
+      <button class="theme-btn" type="button" hidden>Dark theme</button>
+    </div>
+  </header>
+
+  <div class="wrap docs">
+    <aside class="docs-side">
+      <nav aria-label="On this page">
+        <p class="side-title">On this page</p>
+        <ul>
+            <li><a href="#install">Install</a></li>
+            <li><a href="#quick-start">Quick start</a></li>
+            <li><a href="#concepts">Concepts</a></li>
+            <li><a href="#commands">Command reference</a></li>
+            <li><a href="#claude-code">Claude Code integration</a></li>
+            <li><a href="#security">Security and privacy</a></li>
+            <li><a href="#troubleshooting">Troubleshooting</a></li>
+        </ul>
+      </nav>
+      <nav class="others" aria-label="Documentation for each tool">
+        <p class="side-title">Documentation</p>
+        <ul>
+            <li data-tool="daleq"><a href="../daleq/">daleq</a></li>
+            <li data-tool="drawingboard"><a href="../drawingboard/">drawingboard</a></li>
+            <li data-tool="imgcompare"><a href="../imgcompare/" aria-current="page">imgcompare</a></li>
+            <li data-tool="godot-pilot"><a href="../godot-pilot/">godot-pilot</a></li>
+            <li data-tool="simq"><a href="../simq/">simq</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main id="main" class="docs-main">
+      <h1>imgcompare documentation</h1>
+      <p class="lede">imgcompare is a local review page plus a CLI for comparing pictures: art directions, mockups, screenshots, icons. The reviewer marks, votes and picks in the browser; Claude reads the feedback back as Markdown or JSON. This page describes version 0.3.0. It needs Node 20+ and has no dependencies.</p>
+      <p class="status-line"><span class="badge" data-status="imgcompare">Not public yet</span> <a href="../../imgcompare/">About imgcompare</a> <a data-repo="imgcompare" href="#" hidden>Source on GitHub</a></p>
+        <section aria-labelledby="install">
+          <h2 id="install"><a href="#install">Install</a></h2>
+          <p class="private-note" data-private="imgcompare"><strong>Not public yet.</strong> There is no public repository yet. These are the commands as they will be once there is one.</p>
+          <p>For Claude Code, use either the plugin (user-wide) or <code>imgcompare init</code> (per project, committed with the project).</p>
+          <div class="cmd"><pre><code>/plugin marketplace add mr-wheelkers/imgcompare
+/plugin install image-comparison@image-comparison</code></pre></div>
+          <p>With the Claude Code plugin installed, Claude already has <code>imgcompare</code> on its PATH: Claude Code puts an enabled plugin's <code>bin/</code> on the Bash tool's PATH. Your own terminal doesn't get it. There, link the command once in a checkout of the repository:</p>
+          <div class="cmd"><pre><code>scripts/install.sh<span class="k">                              # once: ~/.local/bin/imgcompare</span></code></pre></div>
+          <p>Without it, <code>node bin/compare.mjs</code> takes the same commands. The binary isn't called <code>compare</code> because ImageMagick ships a <code>compare</code> command.</p>
+          <p>claude.ai and Cowork don't install a plugin that has a top-level <code>bin/</code> folder, so this plugin is for Claude Code only.</p>
+          <p><strong>How far this release is tested.</strong> The test suite passes on Linux, including the browser tests in Chromium. Nothing has been run on macOS or Windows, or in Firefox or Safari. The plugin's monitor and the plugin's command on Claude's PATH have not been tried in a live Claude Code session.</p>
+        </section>
+        <section aria-labelledby="quick-start">
+          <h2 id="quick-start"><a href="#quick-start">Quick start</a></h2>
+          <figure class="term">
+            <figcaption class="bar"><span>a first review, on the sample images</span></figcaption>
+            <pre><code><span class="c">imgcompare scan seed-demo</span>
+<span class="k"># folders of images → seed-demo/manifest.json</span>
+<span class="c">imgcompare serve seed-demo/manifest.json</span>
+<span class="o">URL: http://127.0.0.1:8790/</span>
+<span class="k"># open it, review, press "I'm done"</span>
+<span class="c">imgcompare summary seed-demo/manifest.json</span></code></pre>
+          </figure>
+          <p><code>seed-demo/</code> holds a few generated sample PNGs that cover every naming convention. <code>imgcompare demo [dir]</code> writes the same samples plus a manifest anywhere.</p>
+          <h3>With your own images</h3>
+          <ol>
+            <li>Put the images somewhere on disk. The easiest layout is one folder per thing being compared, for example <code>review/logo/*.png</code> and <code>review/icon/*.png</code>.</li>
+            <li>Generate a manifest: <code>imgcompare scan review --title "Logo directions"</code>. Check the printed group and image counts and any <code>warning: missing files</code>.</li>
+            <li>Serve it: <code>imgcompare serve review/manifest.json --port 8790</code>. The first stdout line is <code>URL: http://127.0.0.1:&lt;port&gt;/</code>. If 8790 is busy, the next free port is used.</li>
+            <li>Open the URL. Draw on what you like or dislike, vote, pick, and press "I'm done".</li>
+            <li>Read the result: <code>imgcompare summary review/manifest.json</code>.</li>
+          </ol>
+          <p>Stop the server when the review is over.</p>
+        </section>
+        <section aria-labelledby="concepts">
+          <h2 id="concepts"><a href="#concepts">Concepts</a></h2>
+          <h3>Groups and cells</h3>
+          <p>A manifest lists groups; each group holds the images being compared, called cells. <code>scan &lt;dir&gt;</code> makes one group per directory that directly holds images. A group can have a reference image, shown first with a badge: a file named <code>reference.png</code>, <code>current.png</code>, <code>baseline</code>, <code>before</code> and a few others.</p>
+          <h3>Marks, votes and picks</h3>
+          <ul>
+            <li><strong>Marks</strong>: rectangles (drag) or markers (click) on any image, tagged Like or Don't like. Each mark gets a number and its own note.</li>
+            <li><strong>Votes</strong>: Stay or Change on each image, with a comment.</li>
+            <li><strong>Picks</strong>: "Which designs do you like more?" for each group. When you pick several, the page asks what to take from each pick. There is also a free-form group note.</li>
+          </ul>
+          <p>Mark positions are fractions 0..1 of the image width and height, origin top-left. The Markdown summary gives them as percent of the image's width and height from the top-left.</p>
+          <h3>Animations and frames</h3>
+          <ul>
+            <li>A sprite strip named <code>foo_anim.png</code> is cut into frames and played as the motion animation for cell <code>foo</code>. GIF, MP4 and WebM files play as they are.</li>
+            <li>In the large view, Frames (or <kbd>F</kbd>) shows an animation strip one frame at a time. Marks, votes and comments then apply to that frame only, and the thumbnails show which frames have feedback.</li>
+            <li>A group whose images are keyframes of one animation (<code>kf_01.png…</code>, <code>frame_1…</code>, <code>walk_01…</code>, or <code>"sequence": true</code>) gets a Play button, numbered thumbnails and the question "Which frames work best?".</li>
+          </ul>
+          <h3>Compare modes</h3>
+          <p>Open a picture large and press Compare (<kbd>C</kbd>). The picture is compared with the group's <code>reference</code> image, or with the next picture when the group has no reference.</p>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Key / Mode">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Key</th><th scope="col">Mode</th></tr></thead>
+              <tbody>
+              <tr><td data-label="Key"><code>1</code></td><td data-label="Mode">Side by side</td></tr>
+              <tr><td data-label="Key"><code>2</code></td><td data-label="Mode">Overlay: the second picture on top of the first, with an opacity you change</td></tr>
+              <tr><td data-label="Key"><code>3</code></td><td data-label="Mode">Slider: drag the handle</td></tr>
+              <tr><td data-label="Key"><code>4</code></td><td data-label="Mode">Difference: differing pixels are magenta and the rest is dimmed, with the share of pixels that differ</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>While comparing, marks are not drawn and drawing is off. Compare works on whole images, not in Frames mode.</p>
+          <h3>Provenance sidecars</h3>
+          <p>An optional JSON file next to an image, <code>foo.prov.json</code> for <code>foo.png</code>, says where the image came from:</p>
+          <div class="cmd"><pre><code>{ "model": "flux-1.1-pro", "prompt": "a round logo, flat colours", "seed": 42, "cost": 0.04,
+  "licence": "CC0-1.0", "parent": "logo_v1.png", "created": "2026-11-18T10:00:00Z" }</code></pre></div>
+          <p>Every field is optional. The page shows a short line under the card and every field in the large view. <code>summary</code> echoes the provenance of every image that was picked or got feedback, so Claude knows which prompt and seed made the favourite. Sidecar text is untrusted: the page sets it as text, never as HTML.</p>
+          <h3>Blind reviews</h3>
+          <p><code>imgcompare serve &lt;manifest&gt; --blind</code>, or <code>"blind": true</code> in the manifest, hides which picture is which. Each group's candidates are shuffled and called Option A, Option B and so on; the reference stays first, with its badge. <code>imgcompare summary</code> uses the real names and adds what the reviewer saw: <code>Preferred: Neon (shown as Option B)</code>.</p>
+          <p>Blind mode is there to avoid bias, not to keep secrets: the cell ids (file stems) are still in the page's data.</p>
+          <h3>Rounds</h3>
+          <p>To show a new round, add or replace the images and re-run <code>scan … --force</code>. The owner reloads the page. Feedback is kept by cell id, so images that keep their file name keep their marks.</p>
+          <h3>The "Next round" checklist</h3>
+          <p>When the feedback asks for changes, the summary ends with a checklist of what the next round must contain:</p>
+          <div class="cmd"><pre><code><span class="k">## Next round</span>
+The feedback asks for changes. A next round must contain:
+- [ ] Logo: one image that blends Current logo + Option B
+  - from Option B: the colour
+- [ ] Logo: Option B reworked: too busy (fix mark 2; keep what mark 1 likes)
+- [ ] Logo: the group note addressed: Make it rounder</code></pre></div>
+          <p>It is built by fixed rules, with no model involved, so the same feedback always gives the same list. "Asks for changes" means a Change vote on an image or an animation frame, or two or more picks in a group. One pick with no Change vote is a decision, and gives no checklist.</p>
+          <h3>Where feedback lives</h3>
+          <p>Everything autosaves to the browser's localStorage and to <code>feedback.json</code> next to the manifest (or <code>&lt;name&gt;.feedback.json</code> for any other manifest name). If the server is unreachable, the page keeps working from localStorage. When the page loads, it uses whichever copy has the newer <code>updated</code>. If two tabs edit at once, the last write wins.</p>
+          <h3>The feedback file</h3>
+          <div class="cmd"><pre><code>"&lt;groupId&gt;": {
+  "pick": ["current", "neon"],          // "which designs do you like more", in click order
+  "take": { "neon": "the glow" },       // "what should come from this design" (when 2+ picks)
+  "note": "free text about the group",</code></pre></div>
+          <p>Each cell has a <code>vote</code> (<code>keep</code>, <code>change</code> or empty), a <code>comment</code>, its <code>marks</code>, and <code>frames</code>: feedback on single frames of the cell's animation strip, keyed by 1-based frame number. <code>summary --json</code> returns a resolved view with labels, totals and <code>unreviewedCells</code>.</p>
+        </section>
+        <section aria-labelledby="commands">
+          <h2 id="commands"><a href="#commands">Command reference</a></h2>
+          <div class="cmd"><pre><code>imgcompare &lt;command&gt; [options]<span class="k">      # every command has --help; --version prints the version</span></code></pre></div>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Command / What it does">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Command</th><th scope="col">What it does</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Command"><code>scan &lt;dir&gt;</code></td><td data-label="What it does">Builds a manifest from a folder: one group per directory that directly holds images</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>scan &lt;spec.yaml|spec.json&gt;</code></td><td data-label="What it does">Builds a manifest from a spec file (explicit cells and/or globs)</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>scan --glob '&lt;pattern&gt;' [--glob …]</code></td><td data-label="What it does">Builds a manifest from glob patterns, grouped <code>--group-by dir</code> (default), <code>none</code> or <code>re:&lt;regex&gt;</code></td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>serve &lt;manifest&gt;</code></td><td data-label="What it does">Serves the page and images, and saves feedback next to the manifest. Options: <code>--port</code> (default 8790, 0 = any), <code>--strict-port</code>, <code>--host</code> with <code>--lan</code>, <code>--blind</code>, <code>--feedback &lt;file&gt;</code></td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>summary &lt;feedback.json|manifest&gt;</code></td><td data-label="What it does">Prints the Markdown summary in one quoted block. It ends with the "Next round" checklist when changes were asked for. <code>--json</code> gives structured output</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>wait &lt;manifest|feedback.json&gt;</code></td><td data-label="What it does">Blocks until "I'm done" is pressed, then prints the same block as <code>summary</code>. Options: <code>--timeout &lt;sec&gt;</code>, <code>--interval &lt;sec&gt;</code>, <code>--json</code></td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>check &lt;manifest&gt;</code></td><td data-label="What it does">Validates a manifest and that its files exist (exit 1 on errors; <code>--json</code>)</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>demo [dir]</code></td><td data-label="What it does">Writes sample images and a manifest</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>init [DIR]</code></td><td data-label="What it does">Prepares a project for Claude Code</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>hook posttooluse|userpromptsubmit</code></td><td data-label="What it does">The hooks <code>init</code> installs</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>watch [DIR]</code></td><td data-label="What it does">Runs until stopped and prints one line each time "I'm done" is pressed on a review served from the project that holds <code>DIR</code>. The plugin runs it as its monitor. Options: <code>--interval &lt;sec&gt;</code>, <code>--once</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p><code>scan</code> options: <code>--out &lt;file&gt;</code>, <code>--title</code>, <code>--sequence</code> / <code>--no-sequence</code>, <code>--reference a,b</code> (or <code>--no-reference</code>), <code>--labels &lt;file.json|yaml&gt;</code>, <code>--scale &lt;n|max&gt;</code>, <code>--force</code> (overwrite a manifest that changed), <code>--print</code> (print to stdout instead of writing), <code>--blind</code> (write <code>"blind": true</code>).</p>
+          <h3>Exit codes</h3>
+          <p><code>0</code> ok, <code>1</code> error (missing file, bad manifest, port in use with <code>--strict-port</code>), <code>2</code> usage, <code>3</code> no feedback yet (<code>summary</code>), <code>4</code> timed out (<code>wait</code>).</p>
+          <h3>Folder conventions</h3>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: File / Becomes">
+            <table class="cols-2">
+              <thead><tr><th scope="col">File</th><th scope="col">Becomes</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="File"><code>foo.png</code>, <code>foo@2x.png</code>, <code>foo@3x.png</code></td><td data-label="Becomes">one cell <code>foo</code>; the largest scale is used</td></tr>
+              <tr><td class="wrap-code" data-label="File"><code>foo_anim.png</code></td><td data-label="Becomes">the motion animation for cell <code>foo</code>; <code>.gif</code>, <code>.mp4</code> and <code>.webm</code> too</td></tr>
+              <tr><td class="wrap-code" data-label="File"><code>reference.png</code> / <code>current.png</code></td><td data-label="Becomes">the group's reference image, shown first with a badge</td></tr>
+              <tr><td class="wrap-code" data-label="File"><code>foo.txt</code></td><td data-label="Becomes">a note shown under cell <code>foo</code></td></tr>
+              <tr><td class="wrap-code" data-label="File"><code>foo.prov.json</code></td><td data-label="Becomes">the provenance of cell <code>foo</code> (model, prompt, seed, cost, licence, parent, created)</td></tr>
+              <tr><td class="wrap-code" data-label="File"><code>kf_01.png</code>, <code>frame_1.png</code>, <code>walk_01.png</code>…</td><td data-label="Becomes">with 3 or more, the group is marked <code>"sequence": true</code></td></tr>
+              <tr><td class="wrap-code" data-label="File"><code>group.json</code> (or <code>group.yaml</code>)</td><td data-label="Becomes">the group's name, description, reference, labels, notes, order and skips</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Supported image types: png, jpg, jpeg, webp, gif, svg, avif, bmp.</p>
+          <h3>Spec files</h3>
+          <p>A spec is a manifest whose cells may be globs. Paths are relative to the spec, or to its <code>root</code>.</p>
+          <div class="cmd"><pre><code>title: Art direction v3
+root: ../assets<span class="k">            # base for paths/globs (relative to this file)</span>
+groups:
+  - name: Breakout
+    reference: proto
+    description: prototype vs. three directions
+    cells:
+      - { id: proto, label: Prototype now, src: bible/v2/proto/breakout.png }
+      - glob: bible/v3/breakout/dir*.png<span class="k">           # @2x / _anim / .txt conventions apply</span></code></pre></div>
+          <p>The YAML parser covers the common subset and doesn't support anchors or tags. You can always use JSON instead.</p>
+        </section>
+        <section aria-labelledby="claude-code">
+          <h2 id="claude-code"><a href="#claude-code">Claude Code integration</a></h2>
+          <h3>Prepare a project</h3>
+          <p><code>imgcompare init [DIR] [--dry-run] [--json] [--no-skill] [--no-claude-md] [--no-hook]</code> prepares a project (its git root):</p>
+          <ul>
+            <li><code>.claude/skills/image-comparison/SKILL.md</code>: the skill, with this checkout's path filled in.</li>
+            <li><code>CLAUDE.md</code>: a short section between <code>&lt;!-- image-comparison:begin --&gt;</code> and <code>&lt;!-- image-comparison:end --&gt;</code> markers.</li>
+            <li><code>.claude/settings.json</code>: two hooks.</li>
+          </ul>
+          <p>It's safe to run again, and a second run reports everything <code>unchanged</code>. Settings keep their keys, key order and indent. A broken settings file is an error and is never overwritten.</p>
+          <h3>Hooks</h3>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Hook / What it does">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Hook</th><th scope="col">What it does</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Hook"><code>PostToolUse</code> (<code>Edit|Write|MultiEdit</code>)</td><td data-label="What it does">When Claude edits a review manifest, it's validated: structure plus missing images, strips and notes. Problems go to stderr with exit 2, so Claude sees them. Other JSON files are ignored.</td></tr>
+              <tr><td class="wrap-code" data-label="Hook"><code>UserPromptSubmit</code></td><td data-label="What it does">If the owner pressed "I'm done" on a review served from this project and Claude hasn't read it since, the owner's next message gets a note telling Claude to run <code>imgcompare summary …</code>. Each "done" is reported once.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p><code>imgcompare hook &lt;name&gt;</code> reads the hook event on stdin and never fails the session. The hooks rely on a small registry of served reviews in <code>~/.local/state/imgcompare/reviews.json</code>, or under <code>$IMGCOMPARE_STATE_DIR</code>.</p>
+          <h3>Plugin</h3>
+          <p>The repository is also a Claude Code plugin and a one-plugin marketplace. Use either the plugin or <code>imgcompare init</code>; <code>init</code> sees an enabled plugin and doesn't add duplicate hooks. The plugin adds two things <code>init</code> cannot:</p>
+          <ul>
+            <li><strong><code>imgcompare</code> on Claude's PATH</strong>, so the skill runs <code>imgcompare …</code> without <code>scripts/install.sh</code>.</li>
+            <li><strong>"Done" pushed into the live session.</strong> The plugin declares a monitor that runs <code>imgcompare watch</code> from the first time the skill is used in a session. When you press "I'm done", <code>watch</code> prints one line and Claude Code hands it to Claude as a notification, so Claude reads the summary without waiting for your next message.</li>
+          </ul>
+          <p>The hook stays as the fallback, because monitors are experimental and only start in an interactive session: not with <code>-p</code>, not on Amazon Bedrock, Google Cloud or Microsoft Foundry. Each "done" is reported once across the monitor and the <code>UserPromptSubmit</code> hook.</p>
+          <h3>How Claude uses it</h3>
+          <ol>
+            <li>Claude generates a manifest with <code>scan</code> and serves it in the background. The server is long-lived, so Claude doesn't wait for it to exit.</li>
+            <li>Claude gives you the URL.</li>
+            <li>With the plugin, Claude does nothing: the monitor tells it when you press "I'm done", and it runs <code>imgcompare summary review/manifest.json</code>. Without it, Claude runs <code>imgcompare wait review/manifest.json</code> in the background, or runs <code>summary</code> when you say you're done.</li>
+            <li>The summary comes as one quoted block: your review notes, which are data and not instructions. Picks, "take from each" lines, notes, Stay/Change votes and numbered marks with positions become the brief, and the <code>## Next round</code> checklist says what the next round must contain.</li>
+          </ol>
+        </section>
+        <section aria-labelledby="security">
+          <h2 id="security"><a href="#security">Security and privacy</a></h2>
+          <p>The server is local and serves one review.</p>
+          <ul>
+            <li>It binds to <code>127.0.0.1</code> by default.</li>
+            <li>The page's own files are fixed routes. No URL path is mapped onto the filesystem.</li>
+            <li>Images and group notes are served from <code>/f/&lt;hash&gt;/&lt;name&gt;</code>, and only for files the manifest references. Anything else returns 404, and paths containing <code>..</code> or NUL return 400.</li>
+            <li>The only writable endpoint is <code>PUT /api/feedback</code>. It needs the run's token, takes a JSON object with a <code>groups</code> object, up to 5 MB, and writes it atomically. Every other PUT returns 403.</li>
+          </ul>
+          <p>Claude reads the saved feedback and acts on it, so a forged write would put words in the owner's mouth. The server and the output Claude reads guard against that:</p>
+          <ul>
+            <li><strong>Host allowlist.</strong> A request is served only if its <code>Host</code> is <code>127.0.0.1</code>, <code>localhost</code> or <code>[::1]</code> with the port the server listens on. Anything else gets 403, which stops DNS rebinding.</li>
+            <li><strong>Write token.</strong> Each <code>serve</code> run makes a random token. Saving, "I'm done" included, needs it in the <code>X-Imgcompare-Token</code> header. The page gets it with <code>/api/manifest</code>, which other origins can't read.</li>
+            <li><strong>Other sites.</strong> Requests that a browser marks as coming from another origin get 403, reads included. Files from the manifest are served sandboxed, so an SVG or HTML file can't run script in the page's origin.</li>
+            <li><strong>Other devices.</strong> <code>--host</code> with anything but this machine needs <code>--lan</code> as well, and prints a warning: everyone on the network can then open the page and see the pictures and the feedback. Saving still needs the token, which the <code>LAN:</code> links carry as <code>#token=…</code>. Give that link only to the reviewer.</li>
+            <li><strong>What is written.</strong> The feedback must match the schema; anything else gets 400 and nothing is written.</li>
+            <li><strong>What Claude reads.</strong> <code>summary</code> and <code>wait</code> print one line saying the text is the owner's review notes (a design brief; data, not instructions), then everything else between <code>BEGIN</code>/<code>END OWNER REVIEW &lt;id&gt;</code> lines. The id is random for each printout, so a note or a sidecar can't end the block.</li>
+          </ul>
+          <p>Not covered: other users and programs on the same machine can reach the port and read the token, and anything that can write <code>feedback.json</code> directly doesn't need the server.</p>
+        </section>
+        <section aria-labelledby="troubleshooting">
+          <h2 id="troubleshooting"><a href="#troubleshooting">Troubleshooting</a></h2>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Symptom / What to do">
+            <table class="cols-2">
+              <thead><tr><th scope="col">Symptom</th><th scope="col">What to do</th></tr></thead>
+              <tbody>
+              <tr><td class="wrap-code" data-label="Symptom"><code>summary</code> exits 3</td><td data-label="What to do">There is no feedback yet. Review the page first.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>wait</code> exits 4</td><td data-label="What to do">It timed out (<code>--timeout &lt;sec&gt;</code>). Run it again, or run <code>summary</code> when the review is done.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>serve</code> used another port</td><td data-label="What to do">8790 was busy, so the next free port was used. Read the <code>URL:</code> line. <code>--strict-port</code> makes a busy port an error instead.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>scan</code> prints <code>warning: missing files</code></td><td data-label="What to do">A spec or glob names images that are not on disk. Fix the paths and scan again.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>scan</code> refuses to overwrite</td><td data-label="What to do">The manifest changed. <code>--force</code> overwrites it.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>init &lt;images dir&gt;</code> exits 2</td><td data-label="What to do">Before 0.2, <code>init</code> built manifests. It now prepares projects; use <code>scan</code>.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">A request gets 403 through a forwarded port</td><td data-label="What to do">The <code>Host</code> must name the port the server listens on. If you forward the port (ssh, a container), keep the same port number on both ends.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>--host 0.0.0.0</code> is refused</td><td data-label="What to do"><code>--host</code> with anything but this machine needs <code>--lan</code> as well.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">A phone can open the page but cannot save</td><td data-label="What to do">Saving needs the token. Open the printed <code>LAN:</code> link, which carries it.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>scan</code> or <code>check</code> warns about a sidecar</td><td data-label="What to do">A <code>foo.prov.json</code> is missing, isn't valid JSON, or has a field of the wrong type. It is never an error.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">Claude was not told the review is done</td><td data-label="What to do">Without the plugin's monitor the note arrives with your next message. Say you're done, or have Claude run <code>wait</code>.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">The page lost its server</td><td data-label="What to do">It keeps working from localStorage. When the page loads again, it uses whichever copy, disk or browser, has the newer <code>updated</code>.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+    </main>
+  </div>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>
+        <p>Local tools for working with Claude Code, by Sviatoslav Kolesnyk (<a href="https://github.com/mr-wheelkers">mr-wheelkers</a> on GitHub).</p>
+        <p>Every tool is licensed under Apache-2.0.</p>
+        <p class="small">These are independent tools. Claude Code is a product of Anthropic.</p>
+      </div>
+      <nav aria-label="Tools">
+        <p><strong>Tools</strong></p>
+        <ul><li><a href="../../daleq/">daleq</a></li><li><a href="../../drawingboard/">drawingboard</a></li><li><a href="../../imgcompare/">imgcompare</a></li><li><a href="../../godot-pilot/">godot-pilot</a></li><li><a href="../../simq/">simq</a></li></ul>
+      </nav>
+      <nav aria-label="Documentation">
+        <p><strong>Documentation</strong></p>
+        <ul><li><a href="../../docs/daleq/">daleq</a></li><li><a href="../../docs/drawingboard/">drawingboard</a></li><li><a href="../../docs/imgcompare/">imgcompare</a></li><li><a href="../../docs/godot-pilot/">godot-pilot</a></li><li><a href="../../docs/simq/">simq</a></li></ul>
+      </nav>
+    </div>
+  </footer>
+  <script src="../../assets/tools.js"></script>
+  <script src="../../assets/site.js"></script>
+</body>
+</html>
