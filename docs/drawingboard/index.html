@@ -56,20 +56,31 @@
     </aside>
     <main id="main" class="docs-main">
       <h1>drawingboard documentation</h1>
-      <p class="lede">drawingboard is a local design and task board that lives inside your project and is shared by you and Claude. Everything is a plain JSON file in <code>drawingboard/</code>, committed with your code. The app is one binary that serves a web UI on 127.0.0.1.</p>
+      <p class="lede">drawingboard is a local design and task board that lives inside your project and is shared by you and Claude. Everything is a plain JSON file in <code>drawingboard/</code>, committed with your code. The app is one binary that serves a web UI on 127.0.0.1. Its Claude Code plugin is at version 0.1.0.</p>
       <p class="status-line"><span class="badge" data-status="drawingboard">Not public yet</span> <a href="../../drawingboard/">About drawingboard</a> <a data-repo="drawingboard" href="#" hidden>Source on GitHub</a></p>
         <section aria-labelledby="install">
           <h2 id="install"><a href="#install">Install</a></h2>
-          <p class="private-note" data-private="drawingboard"><strong>Not public yet.</strong> There is no public repository or release yet. This is how it will work once there is one.</p>
+          <p class="private-note" data-private="drawingboard"><strong>Not public yet.</strong> There is no public repository or release yet. These are the commands as they will be once there is one.</p>
           <p>You need Claude Code (<code>claude</code> on your PATH) for the Claude parts. The board itself works without it.</p>
           <ul>
-            <li><strong>Download the binary</strong> for your platform, if a release is available, and put it on your PATH as <code>drawingboard</code>.</li>
+            <li><strong>Download the binary</strong> for your platform (macOS or Linux) from the releases, once one is published. The install script picks the right one, checks its checksum and puts it in <code>~/.local/bin</code>.</li>
             <li><strong>Or build it</strong> from the repository with Go and Node. Node is only needed to build the UI; the binary embeds it.</li>
           </ul>
+          <div class="cmd"><pre><code>curl -fsSL https://github.com/mr-wheelkers/drawingboard/releases/latest/download/install.sh | sh</code></pre></div>
           <div class="cmd"><pre><code>make build<span class="k">       # bin/drawingboard</span>
 make install<span class="k">     # copies it to ~/.local/bin/drawingboard</span></code></pre></div>
-          <p>Check with <code>drawingboard help</code>. It is developed on macOS and should work on Linux. On Windows the Claude terminal is not available yet.</p>
-          <p>The check hook that <code>init</code> installs runs <code>drawingboard</code> by name, so keep it on your PATH.</p>
+          <p>Check with <code>drawingboard help</code>. It is developed on macOS and should work on Linux. For Windows it is cross-compiled (<code>make windows</code>) but not run by its author, and the Claude terminal is experimental there.</p>
+          <p>Neither this build nor the released binaries have the Toolbox tab, the author's own list of tools the app can install. <code>make build TAGS=toolbox</code> builds it in.</p>
+          <h3>As a Claude Code plugin</h3>
+          <p><code>drawingboard init</code> writes the skill and the hooks into one project. The plugin brings the same skill and the same hooks to every project that has a <code>drawingboard/</code> folder, and Claude Code updates and removes them for you. Use one or the other: <code>init</code> sees an enabled plugin and then leaves the skill and the hooks out.</p>
+          <ol>
+            <li>Install the binary as above. The plugin does not contain it; its hooks and its skill run <code>drawingboard</code> from your PATH.</li>
+            <li>In Claude Code, add the repository as a marketplace and install the plugin from it.</li>
+            <li>In your project, run <code>drawingboard init</code> for the board and the <code>CLAUDE.md</code> section.</li>
+          </ol>
+          <div class="cmd"><pre><code>/plugin marketplace add mr-wheelkers/drawingboard
+/plugin install drawingboard@drawingboard</code></pre></div>
+          <p>On Claude Code 2.1.275 or later one line does both: <code>/plugin install drawingboard --marketplace mr-wheelkers/drawingboard</code>. To remove the plugin: <code>/plugin uninstall drawingboard@drawingboard</code>.</p>
         </section>
         <section aria-labelledby="quick-start">
           <h2 id="quick-start"><a href="#quick-start">Quick start</a></h2>
@@ -108,7 +119,10 @@ make install<span class="k">     # copies it to ~/.local/bin/drawingboard</span>
               </tbody>
             </table>
           </div>
-          <p>A mark's status goes from <code>open</code> to <code>addressed</code> (Claude or someone changed something) to <code>resolved</code> (you agree). <code>wontfix</code> is also allowed. Claude can also ask you questions as marks.</p>
+          <p>A mark's status goes from <code>open</code> to <code>addressed</code> (Claude or someone changed something) to <code>resolved</code> (you agree). <code>wontfix</code> is also allowed. When Claude declines, it says why: <code>drawingboard mark &lt;id&gt; wontfix</code> without reply text is refused. Claude can also ask you questions as marks.</p>
+          <h4>Waiting for your marks</h4><p>The hooks tell Claude about marks only with the next prompt. To be woken while you are still reviewing, Claude, or the plugin's monitor, runs:</p>
+          <div class="cmd"><pre><code>drawingboard marks --watch [--timeout 30m] [-canvas name]</code></pre></div>
+          <p>It blocks until you add a mark, reply to one, reopen one or change the text of your own. Then it prints those marks and exits 0; exit 3 when <code>--timeout</code> passed and you changed nothing. No app is needed. What Claude was last told is kept in <code>drawingboard/.state/watch.json</code>, so nothing is lost between two watches, and the watch and the prompt notice never repeat each other.</p>
           <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Tool / Key / Click / Drag">
             <table class="cols-many">
               <thead><tr><th scope="col">Tool</th><th scope="col">Key</th><th scope="col">Click</th><th scope="col">Drag</th></tr></thead>
@@ -163,19 +177,24 @@ make install<span class="k">     # copies it to ~/.local/bin/drawingboard</span>
               <tbody>
               <tr><td class="wrap-code" data-label="Command"><code>drawingboard [serve] [-port 4320] [-open] [board-dir]</code></td><td data-label="What it does">serve the app on 127.0.0.1 (the default command)</td></tr>
               <tr><td class="wrap-code" data-label="Command"><code>drawingboard init [DIR] [--dry-run] [--json] [--no-sample] ...</code></td><td data-label="What it does">prepare a project: board, sample, skill, CLAUDE.md section, hooks</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard version [--json]</code></td><td data-label="What it does">the version, commit, build date, board format and catalog versions</td></tr>
               <tr><td class="wrap-code" data-label="Command"><code>drawingboard status [--json]</code></td><td data-label="What it does">the whole board on one screen: canvases, open marks, tasks, check totals, Doctor</td></tr>
               <tr><td class="wrap-code" data-label="Command"><code>drawingboard check [board-dir]</code></td><td data-label="What it does">validate the board; exit 1 on errors</td></tr>
               <tr><td class="wrap-code" data-label="Command"><code>drawingboard catalog [-short] [-json] [platform | platform.kind]</code></td><td data-label="What it does">the mockup types and their props</td></tr>
               <tr><td class="wrap-code" data-label="Command"><code>drawingboard show canvas/&lt;c&gt;/&lt;screen&gt;.json</code></td><td data-label="What it does">a screen as a text outline, with open marks</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard search [--json] "&lt;query&gt;"</code></td><td data-label="What it does">find screens, elements, marks, notes, mind maps, images, zones and tasks by text</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard handoff canvas/&lt;c&gt;/&lt;screen&gt;.json[#node] [--target "&lt;framework&gt;"]</code></td><td data-label="What it does">a build brief for a screen or diagram: outline, layout intent, code links, drift, open marks, linked tasks</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard built canvas/&lt;c&gt;/&lt;screen&gt;.json</code></td><td data-label="What it does">record that a screen is built; <code>show</code> and <code>status</code> then say what changed since</td></tr>
               <tr><td class="wrap-code" data-label="Command"><code>drawingboard patch canvas/&lt;c&gt;/&lt;screen&gt;.json '&lt;ops&gt;'</code></td><td data-label="What it does">edit a canvas file by node id, the way the app does</td></tr>
               <tr><td class="wrap-code" data-label="Command"><code>drawingboard marks [-all] [-canvas name]</code></td><td data-label="What it does">list the open marks (or all)</td></tr>
-              <tr><td class="wrap-code" data-label="Command"><code>drawingboard mark &lt;id&gt; &lt;status&gt; [reply]</code></td><td data-label="What it does">set a mark's status, optionally with a reply</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard mark &lt;id&gt; &lt;status&gt; [reply]</code></td><td data-label="What it does">set a mark's status, optionally with a reply (<code>wontfix</code> needs one: why not)</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard marks --watch [--timeout 30m] [-canvas name]</code></td><td data-label="What it does">wait until you add or change a mark, print it and exit 0 (exit 3 on timeout)</td></tr>
               <tr><td class="wrap-code" data-label="Command"><code>drawingboard mark add canvas/&lt;c&gt;/&lt;screen&gt;.json[#node] "&lt;text&gt;"</code></td><td data-label="What it does">add a mark as Claude (a question)</td></tr>
               <tr><td class="wrap-code" data-label="Command"><code>drawingboard export canvas/&lt;c&gt;/&lt;file&gt;.json</code></td><td data-label="What it does">save a PNG of a screen, note, mind map, image or zone; <code>--all</code> for every screen and item</td></tr>
               <tr><td class="wrap-code" data-label="Command"><code>drawingboard task &lt;list|show|new|move|set|reply|field|forms|column&gt;</code></td><td data-label="What it does">work the task board; <code>drawingboard task help</code></td></tr>
               <tr><td class="wrap-code" data-label="Command"><code>drawingboard checkpoint [create "&lt;label&gt;" | list | diff &lt;id&gt; | restore &lt;id&gt;]</code></td><td data-label="What it does">snapshots of the board</td></tr>
               <tr><td class="wrap-code" data-label="Command"><code>drawingboard format</code></td><td data-label="What it does">print the board format guide</td></tr>
-              <tr><td class="wrap-code" data-label="Command"><code>drawingboard hook posttooluse|pretooluse|sessionstart|userpromptsubmit</code></td><td data-label="What it does">the Claude Code hooks that <code>init</code> installs</td></tr>
+              <tr><td class="wrap-code" data-label="Command"><code>drawingboard hook posttooluse|pretooluse|sessionstart|userpromptsubmit</code></td><td data-label="What it does">the Claude Code hooks that <code>init</code> installs and the plugin brings</td></tr>
               </tbody>
             </table>
           </div>
@@ -191,32 +210,37 @@ make install<span class="k">     # copies it to ~/.local/bin/drawingboard</span>
         </section>
         <section aria-labelledby="claude-code">
           <h2 id="claude-code"><a href="#claude-code">Claude Code integration</a></h2>
-          <h3>What init installs</h3>
-          <p><code>drawingboard init</code> installs the drawingboard skill (<code>.claude/skills/drawingboard/</code>), adds a short section to <code>CLAUDE.md</code>, and adds Claude Code hooks to <code>.claude/settings.json</code>:</p>
-          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Hook / What it does">
-            <table class="cols-2">
-              <thead><tr><th scope="col">Hook</th><th scope="col">What it does</th></tr></thead>
+          <h3>Plugin or init</h3>
+          <p><code>drawingboard init</code> writes four Claude Code hooks into the project's <code>.claude/settings.json</code>, the skill into <code>.claude/skills/drawingboard/</code> and a short section into <code>CLAUDE.md</code>. The plugin brings the same four hooks and the same skill. Never both: when the plugin is enabled, <code>init</code> leaves the skill and the hooks out.</p>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Hook / Runs / What it does">
+            <table class="cols-many">
+              <thead><tr><th scope="col">Hook</th><th scope="col">Runs</th><th scope="col">What it does</th></tr></thead>
               <tbody>
-              <tr><td class="wrap-code" data-label="Hook"><code>drawingboard hook posttooluse</code></td><td data-label="What it does">checks board files after Claude edits them, and logs which screens Claude wrote</td></tr>
-              <tr><td class="wrap-code" data-label="Hook"><code>drawingboard hook pretooluse</code></td><td data-label="What it does">before a Bash command, stamps the screens so that changes made during it can be logged</td></tr>
-              <tr><td class="wrap-code" data-label="Hook"><code>drawingboard hook sessionstart</code></td><td data-label="What it does">gives a new (or resumed, cleared, compacted) session a digest: open marks with the newest five, screens changed since the last digest, Doing and To do tasks</td></tr>
-              <tr><td class="wrap-code" data-label="Hook"><code>drawingboard hook userpromptsubmit</code></td><td data-label="What it does">adds one line to a prompt only when the board changed since the last prompt other than by Claude</td></tr>
+              <tr><td class="wrap-code" data-label="Hook"><code>drawingboard hook sessionstart</code></td><td data-label="Runs">when a session starts, resumes, is cleared or compacted</td><td data-label="What it does">Gives Claude a short board digest.</td></tr>
+              <tr><td class="wrap-code" data-label="Hook"><code>drawingboard hook userpromptsubmit</code></td><td data-label="Runs">with every prompt</td><td data-label="What it does">Gives Claude one line when you changed something; nothing when only Claude did, or nothing changed.</td></tr>
+              <tr><td class="wrap-code" data-label="Hook"><code>drawingboard hook pretooluse</code></td><td data-label="Runs">before Claude runs a Bash command</td><td data-label="What it does">Notes the screen files' dates. It prints nothing and never blocks the call.</td></tr>
+              <tr><td class="wrap-code" data-label="Hook"><code>drawingboard hook posttooluse</code></td><td data-label="Runs">after Edit, Write, MultiEdit and Bash</td><td data-label="What it does">After an edit of a board JSON file: checks the board and shows Claude that file's errors. After Bash: logs which screens the command changed.</td></tr>
               </tbody>
             </table>
           </div>
-          <p>The digest and the notice are silent on any error and take about a millisecond. What they last saw is kept in <code>drawingboard/.state/hooks.json</code>; <code>.state/</code> ignores itself in git.</p>
+          <p>All four work only in a project that has a <code>drawingboard/</code> folder, write only inside <code>drawingboard/.state/</code>, use no network, call no model and start no other program. They stay silent and exit 0 when anything goes wrong, so a broken board never blocks a session.</p>
+          <h3>The monitor</h3>
+          <p>The plugin adds one thing <code>init</code> cannot: a monitor, <code>drawingboard-marks</code>. Once Claude has used the skill in a session, a mark you add or change reaches that session at once, not with your next prompt. It runs <code>drawingboard marks --watch</code> in a loop and prints only what the watch prints.</p>
+          <ul>
+            <li>It starts with the skill, not with every session: a session that never touches the board runs no watch.</li>
+            <li>It cannot spin. When the watch fails, the loop waits 5 seconds, then 10, doubling up to 5 minutes, and tries again.</li>
+            <li>Monitors are an experimental Claude Code feature. They do not start in <code>-p</code> runs, nor where Claude Code has no Monitor tool. Nothing is lost there: the prompt notice reports the same marks with the next prompt.</li>
+            <li>Two sessions on one board each run a watch, and a change is printed by the one that looks first.</li>
+          </ul>
           <h3>How Claude works with marks</h3>
           <div class="cmd"><pre><code>drawingboard marks<span class="k">                      # open marks across the board, one per line</span>
 drawingboard marks --all<span class="k">                # every status</span>
+drawingboard marks --watch<span class="k">              # wait for the user's next mark, reply or reopen</span>
 drawingboard show canvas/demo/prefs-macos.json<span class="k">   # outline of the screen with marks inline</span>
 drawingboard mark m-0007 addressed "Made it primary and 96px wide"<span class="k">   # status + reply</span></code></pre></div>
           <p>Claude reads <code>show</code> before editing a screen with marks. After making the change, it sets the mark to <code>addressed</code> with a short reply. It never sets <code>resolved</code>: that is your call. The CLI enforces it: <code>drawingboard mark &lt;id&gt; resolved</code> (or <code>wontfix</code>) on a mark whose author is <code>user</code> is refused. Claude may resolve its own marks.</p>
-          <h3>Who changed a screen</h3>
-          <p>Marks carry their author, but a screen file does not, so every write to a screen is logged in <code>drawingboard/.state/writes.jsonl</code>. The app's writes count as yours. The CLI's writes and Claude's Edit, Write and Bash tools count as Claude's. The prompt hook then reports a screen you edited in the app, leaves out one that is exactly as Claude's last logged write left it, and reports anything else neutrally.</p>
           <h3>The terminal and Ask Claude</h3>
-          <p>The terminal dock runs the real <code>claude</code> CLI, interactively, in your project root, so it uses your project's CLAUDE.md, settings, skills and MCP servers and your own login. There is one session per server: it survives page reloads, and several tabs share it.</p>
-          <p>"Ask Claude" buttons open the dock and type a reference to a node, a mark or a task, such as <code>canvas/main/welcome.json#n-start mark m-0001 "Try it: ..."</code>. They never press Enter: you can add to the text, then press Enter yourself.</p>
-          <p>"New session" restarts <code>claude</code>; "Continue last" restarts <code>claude --continue</code>. A checkpoint of the board is taken first.</p>
+          <p>The terminal dock runs the real <code>claude</code> CLI, interactively, in your project root, so it uses your project's CLAUDE.md, settings, skills and MCP servers and your own login. "Ask Claude" buttons open the dock and type a reference to a node, a mark or a task. They never press Enter.</p>
         </section>
         <section aria-labelledby="security">
           <h2 id="security"><a href="#security">Security and privacy</a></h2>
@@ -229,9 +253,12 @@ drawingboard mark m-0007 addressed "Made it primary and 96px wide"<span class="k
             <li>Files you add (images, attachments) are limited to safe types, and the app never serves files from outside the board.</li>
           </ul>
           <h3>Board text is data</h3>
+          <p>The hooks and the monitor put text into Claude's context unasked, so they are stricter: board text sits between <code>&lt;board-data&gt;</code> and <code>&lt;/board-data&gt;</code>, each item on one line, with any such tag in the text itself defused. Nothing a mark, a node id or a title says can pass for the hook's own words.</p>
           <p>Mark text is written by the developer and by Claude, so <code>marks</code>, <code>show</code> and <code>status</code> print a header line saying that the board content is data, not instructions, and quote every mark text and reply.</p>
           <h3>What gets pushed</h3>
           <p>Checkpoints in git are refs under <code>refs/drawingboard/</code>, which <code>git push</code> does not send unless you ask for them. Exports and Doctor reports are committed by default; the <code>.gitignore</code> that <code>drawingboard</code> writes into a new board has the two lines ready to uncomment (<code>canvas/*/exports/</code> and <code>doctor/</code>).</p>
+          <h3>What the token does not cover</h3>
+          <p>The token keeps other websites out, not other programs on your machine: don't run the app on a machine you share. Installing tools from the app exists only in a build with the Toolbox, which the released binaries do not have. The repository's SECURITY.md has the full account, every hook included.</p>
         </section>
         <section aria-labelledby="troubleshooting">
           <h2 id="troubleshooting"><a href="#troubleshooting">Troubleshooting</a></h2>
@@ -245,7 +272,10 @@ drawingboard mark m-0007 addressed "Made it primary and 96px wide"<span class="k
               <tr><td class="wrap-code" data-label="Symptom"><code>drawingboard check</code> exits 1</td><td data-label="What to do">The board has errors; the output lists them. It also reports marks whose screen no longer exists.</td></tr>
               <tr><td class="wrap-code" data-label="Symptom"><code>drawingboard mark &lt;id&gt; resolved</code> is refused</td><td data-label="What to do">Claude may not resolve your marks. Set <code>addressed</code> instead, or resolve it yourself in the app.</td></tr>
               <tr><td class="wrap-code" data-label="Symptom"><code>export</code> says it drew the picture headless</td><td data-label="What to do">The app is not open, or its tab is hidden or asleep, so the command used a headless Chrome, Chromium, Edge or Brave instead.</td></tr>
-              <tr><td class="wrap-code" data-label="Symptom">No Claude terminal on Windows</td><td data-label="What to do">The Claude terminal is not available on Windows yet.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">The Claude terminal misbehaves on Windows</td><td data-label="What to do">On Windows the Claude terminal is experimental. If it misbehaves, run <code>claude</code> in your own terminal.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">Hooks or the skill run twice</td><td data-label="What to do">The project was prepared by an earlier <code>init</code> and the plugin is now enabled. Run <code>drawingboard init</code> again: it names the copies to remove.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>drawingboard mark &lt;id&gt; wontfix</code> is refused</td><td data-label="What to do">It needs a reply saying why.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom"><code>marks --watch</code> exits 3</td><td data-label="What to do">The <code>--timeout</code> passed and you changed nothing.</td></tr>
               <tr><td class="wrap-code" data-label="Symptom">A change went wrong</td><td data-label="What to do">Restore a checkpoint from the Doctor tab, or with <code>list</code> and <code>restore &lt;id&gt;</code> of the <code>drawingboard checkpoint</code> command. A restore takes a checkpoint of the current state first, so you can undo it.</td></tr>
               </tbody>
             </table>

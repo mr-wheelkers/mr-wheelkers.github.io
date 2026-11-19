@@ -56,7 +56,7 @@
     </aside>
     <main id="main" class="docs-main">
       <h1>daleq documentation</h1>
-      <p class="lede">daleq is a small local daemon that runs long commands for a coding agent: it hands back a job id at once, runs the command under watchdogs, and keeps every output and outcome on disk. Supported on macOS and Linux; Windows is experimental.</p>
+      <p class="lede">daleq is a job daemon for coding agents: every long command gets a watchdog and a durable result, and is never run twice on the same tree. This page describes version 0.2.0. Supported on macOS and Linux; Windows and cluster mode are experimental.</p>
       <p class="status-line"><span class="badge" data-status="daleq">Not public yet</span> <a href="../../daleq/">About daleq</a> <a data-repo="daleq" href="#" hidden>Source on GitHub</a></p>
         <section aria-labelledby="install">
           <h2 id="install"><a href="#install">Install</a></h2>
@@ -66,7 +66,8 @@
 /plugin install daleq@daleq
 /daleq-setup</code></pre></div>
           <p><code>/daleq-setup</code> downloads the prebuilt <code>daleq</code> binary for your machine from the latest GitHub release, checks it against the release's checksums and installs it to <code>~/.local/bin</code>. Then restart Claude Code so the MCP server starts.</p>
-          <p>The plugin brings the MCP server (<code>daleq mcp</code>), the hook (<code>daleq hook pretooluse</code>), the <code>daleq</code> skill and <code>/daleq-status</code>.</p>
+          <p>The plugin brings the MCP server (<code>daleq mcp</code>), the hooks (<code>daleq hook pretooluse</code>, and <code>daleq hook stop</code> for the verify gate, which does nothing until a project asks for it), the <code>daleq</code> skill, a monitor that reports job events (<code>daleq watch</code>), and <code>/daleq-status</code>.</p>
+          <p><strong>How far this release is tested.</strong> Job events, the hook's rewrite, ready probes, <code>reuse_on</code>, log time windows, the verify gate and the test guard were checked on Linux only. There has been no real macOS or Windows run, and none in a live Claude Code session: monitor lines, the rewrite prompt and the Stop hook are untried there.</p>
           <h3>Without the plugin</h3>
           <p>Install the binary yourself and add the MCP server:</p>
           <div class="cmd"><pre><code>claude mcp add daleq -- daleq mcp</code></pre></div>
@@ -90,6 +91,8 @@
             <li><code>daleq service uninstall</code>, if you installed the always-on service.</li>
             <li>Delete <code>~/.local/bin/daleq</code> and daleq's home (see <a href="#security">Security and privacy</a>).</li>
           </ol>
+          <h3>Other agents</h3>
+          <p>Codex CLI, Cursor, GitHub Copilot and Gemini CLI use the same MCP server and CLI. The repository's <code>docs/agents.md</code> has the setup for each, none of it tested yet. The hook, the monitor and the verify gate work with Claude Code only.</p>
         </section>
         <section aria-labelledby="quick-start">
           <h2 id="quick-start"><a href="#quick-start">Quick start</a></h2>
@@ -134,6 +137,7 @@
             <li><strong>Idle output</strong>: no output for 10 min means hung.</li>
             <li><code>fail_on</code>: an output regex that ends the job as failed.</li>
             <li><code>ready_on</code>: an output regex that marks a server ready and keeps it running.</li>
+            <li><strong>Ready probes</strong>, for servers whose output says nothing reliable: <code>ready_http</code> (a GET that answers 2xx or 3xx), <code>ready_tcp</code> (the port accepts a connection) and <code>ready_cmd</code> (exits 0, e.g. <code>pg_isready -q</code>). With several checks, the first to pass makes the job ready, and <code>daleq status</code> says which.</li>
             <li><strong>Check-ins, for servers</strong>: a <code>ready_on</code> job submitted without a timeout is not stopped by a 30-minute clock. After an hour, daleq asks the submitting session whether it is still needed; <code>daleq keep ID</code> keeps it for another hour.</li>
           </ul>
           <p>Kills go to the whole process group: SIGTERM, then SIGKILL after 5 s.</p>
@@ -147,6 +151,53 @@
           <h3>Result reuse</h3>
           <p>The key defaults to cmd + cwd + env, and is matched together with a fingerprint of the git tree (HEAD + diff + untracked files) plus the contents of the files the command names as inputs. Resubmitting attaches to a job that is still running, or that succeeded on the same tree in the last 24 h. If anything changed, the command runs again.</p>
           <p>Failures always rerun, and so do finished servers (<code>ready_on</code>) and <code>io</code> jobs without <code>--output</code>. Use <code>--key</code> for your own keys, <code>--key -</code> to opt out, and <code>--force</code> to rerun.</p>
+          <h3>Reuse on chosen files</h3>
+          <p>By default any change in the tree runs the command again, a README edit included. <code>--reuse-on GLOB</code> (repeatable; MCP <code>reuse_on</code>; <code>reuse_on = […]</code> in a task) names the files the result depends on:</p>
+          <div class="cmd"><pre><code>--reuse-on '**/*.go' --reuse-on go.mod --reuse-on go.sum</code></pre></div>
+          <ul>
+            <li>It fails closed. When a glob matches no file or reaches outside the checkout, the key covers the whole tree again and the submit says why.</li>
+            <li>It is always said. A reused result names the globs its key covered, and a result keyed on globs is never reused by a submit without them.</li>
+            <li>A glob that misses a file the result depends on (a fixture, an embedded file, a config) reuses a stale result. List everything the command reads, or leave the default.</li>
+          </ul>
+          <h3>Job events in the live session</h3>
+          <p>With the plugin, Claude Code starts <code>daleq watch</code> as a monitor in every interactive session. It prints one line when a job ends or becomes ready, and Claude Code hands each line to the agent as a notification:</p>
+          <figure class="term">
+            <figcaption class="bar"><span>daleq watch</span></figcaption>
+            <pre><code><span class="o">daleq job 20261119-101502-ab12 (unit tests) failed (exit 1, 42s). Check daleq_status 20261119-101502-ab12.</span>
+<span class="o">daleq job 20261119-101731-0c4e (api) timed_out: timed out after 30m0s. Check daleq_status 20261119-101731-0c4e.</span>
+<span class="o">daleq job 20261119-102210-77a1 (dev server) ready: ready_on matched, still running. Check daleq_status 20261119-102210-77a1.</span></code></pre>
+          </figure>
+          <ul>
+            <li><strong>Whose jobs.</strong> Jobs submitted with the session's id, and jobs submitted on this machine in the checkout the session works in. Two sessions in the same checkout hear about each other's jobs; sessions in separate worktrees do not.</li>
+            <li><strong>What is left out.</strong> Anything from before the watcher started, and a result that a wait call already returned.</li>
+            <li><strong>Not a guarantee.</strong> Monitors are an experimental Claude Code feature. They do not start in <code>claude -p</code> runs, nor where Claude Code has no Monitor tool. <code>daleq_wait</code> and <code>daleq_status</code> always work.</li>
+            <li><strong>Turn it off</strong> with <code>DALEQ_WATCH=off</code>.</li>
+          </ul>
+          <h3>Log times and context</h3>
+          <p><code>daleq logs --since WHEN --until WHEN</code> reads only what was written in that time, to the second. <code>WHEN</code> is <code>2m</code> (two minutes ago), <code>+2m</code> (two minutes after the job started), <code>12:03</code> or a full time. With <code>--grep</code>, <code>-C N</code> adds the lines around each match.</p>
+          <h3>Verify gate</h3>
+          <p>A project can keep an agent from saying "done" while its own tasks fail:</p>
+          <div class="cmd"><pre><code>[verify]
+tasks = ["test", "lint"]<span class="k">   # tasks this file defines</span></code></pre></div>
+          <p>When Claude finishes a turn in that checkout, the Stop hook (<code>daleq hook stop</code>) runs those tasks through daleq. On an unchanged tree the earlier results stand, so a stop after a question costs nothing. If a task did not pass, Claude may not stop: it is given the task's name, the job id and the first failure lines, and works on.</p>
+          <ul>
+            <li>It never loops: after 3 blocks in a row the stop goes through, and you are shown what was not verified.</li>
+            <li>It keeps to its timeout: the hook waits 240 s for the tasks. A task still running then does not block.</li>
+            <li>It starts nothing that nobody ran: the hook reruns a task only after someone ran it on purpose in that checkout.</li>
+            <li>The agent has a way out, and you see it: <code>daleq-verify: impossible TASK: REASON</code>.</li>
+          </ul>
+          <h3>Test guard</h3>
+          <p>An agent asked to make failing tests pass can change the tests instead. The test guard keeps the existing tests read-only for a project, in the hook, with no model call. It is off by default:</p>
+          <div class="cmd"><pre><code>[guard]
+tests = true
+protect = ["fixtures/**", "*.approved.txt"]<span class="k">   # optional: more files to treat like tests</span></code></pre></div>
+          <ul>
+            <li>With it on, the hook turns away changes to existing test files, snapshots and golden files, new skips, and loosened coverage thresholds, for the file tools and for shell commands that would do the same.</li>
+            <li>Adding tests stays free. A new test file, and one added earlier on the same branch, can be written and reworked as often as needed.</li>
+            <li>Putting tests in scope is yours alone: start the session with <code>DALEQ_GUARD_TESTS=off</code>.</li>
+            <li>It reads what a command says, not what it does, so it misses a path held in a variable or a script that writes files. Also run <code>scripts/check-test-integrity.sh</code> in CI.</li>
+          </ul>
+          <div class="cmd"><pre><code>DALEQ_GUARD_TESTS=off claude --continue<span class="k">    # this session may change tests</span></code></pre></div>
           <h3>Bounded waits</h3>
           <p>A server-side <code>wait</code> blocks at most 120 s. <code>daleq submit --wait</code> and <code>daleq wait</code> block at most <code>--max-wait</code>: default 540 s, under an agent's 10-minute shell timeout. They exit 6 if the job is still running.</p>
           <h3>Pipelines fail when any part fails</h3>
@@ -179,8 +230,8 @@ daleq submit --resource watch -- ./sim.sh test<span class="k">                  
 daleq lease sim --note "login screen screenshots"<span class="k">   # prints the lease id and DALEQ_SLOT_SIM=simq-2</span>
 daleq release lease-3f9a1c2e<span class="k">                        # the slot is healed before anyone else gets it</span></code></pre></div>
           <p>A lease is meant to be held only while it is used. After <code>--ttl</code> (120 s) without a call, a queued job that needs the pool may reclaim it; after <code>--lapse</code> (900 s) it ends anyway; and it ends after <code>--max</code> (2 h) however often it is renewed. Slots left in a bad state are healed before anyone reuses them.</p>
-          <h3>Several machines</h3>
-          <p>One queue can span several machines, connected over any network where they can reach each other: a LAN, Tailscale or WireGuard. One machine coordinates; every machine, the coordinator included, runs jobs as a node. In a cluster, a job submitted from a git work tree carries a snapshot of it, so any node can run it.</p>
+          <h3>Several machines (experimental)</h3>
+          <p>Cluster mode is the newest and least used part of daleq. One queue can span several machines, connected over any network where they can reach each other: a LAN, Tailscale or WireGuard. One machine coordinates; every machine, the coordinator included, runs jobs as a node. In a cluster, a job submitted from a git work tree carries a snapshot of it, so any node can run it.</p>
           <div class="cmd"><pre><code>daleq cluster init --advertise mac.local<span class="k">        # on the coordinator: prints a one-time join command</span>
 daleq cluster join mac.local:7787 TOKEN --ca FP<span class="k"> # on each other machine</span>
 daleq cluster status<span class="k">                            # role, coordinator, nodes and what each has</span></code></pre></div>
@@ -188,15 +239,18 @@ daleq cluster status<span class="k">                            # role, coordina
         <section aria-labelledby="commands">
           <h2 id="commands"><a href="#commands">Command reference</a></h2>
           <div class="cmd"><pre><code>daleq submit [flags] -- CMD...<span class="k">      # prints the id; --wait / --until-ready to block (bounded)</span>
-    --kind cpu|io  --weight N  --priority N  --key K  --force
+    --kind cpu|io  --weight N  --priority N  --key K  --force  --reuse-on GLOB
     --timeout SEC  --idle-timeout SEC  --fail-on RE  --ready-on RE
+    --ready-http URL  --ready-tcp HOST:PORT  --ready-cmd CMD<span class="k">    # ready probes, polled; with --ready-on: whichever passes first</span>
     --lock NAME[:shared]  --resource POOL[:N]  --env K=V  --cwd DIR  --label TEXT  --max-wait SEC  --json
 daleq status [REF] [--json]<span class="k">          # REF = id, key, or a unique part of an id</span>
 daleq list [--all] [--limit N] [--label TEXT]<span class="k">   # --label: jobs whose label contains TEXT</span>
 daleq wait REF [--max-wait SEC] [--until-ready] [-q]
 daleq logs REF [--tail N | --offset N] [--follow]<span class="k">   # --grep RE: only matching lines, as OFFSET: line</span>
+    --grep RE -C N<span class="k">                   # with N lines around each match; --since 2m --until 12:05: by time</span>
 daleq cancel REF
 daleq top [--once] [--every SEC] [--recent N]<span class="k">   # live panel: nodes, running/queued jobs, pools, recent outcomes</span>
+daleq watch [--scope auto|session|dir|all] [--waited] [-v]<span class="k">   # one line per job that ends or becomes ready, until stopped</span>
 daleq lease POOL [--wait SEC]<span class="k">        # take a device for yourself (below); daleq release ID gives it back</span>
 daleq prune
 daleq service install|uninstall|status<span class="k">   # optional: keep the daemon always on (launchd agent / systemd user unit)</span></code></pre></div>
@@ -230,7 +284,7 @@ daleq service install|uninstall|status<span class="k">   # optional: keep the da
               <tr><td data-label="Tool"><code>daleq_submit</code></td><td data-label="Use">Start a job; returns the id at once. Always pass <code>cwd</code>. <code>"wait_sec": 60</code> waits inline for short jobs.</td></tr>
               <tr><td data-label="Tool"><code>daleq_wait</code></td><td data-label="Use">Returns when done, or after at most 120s with the current state.</td></tr>
               <tr><td data-label="Tool"><code>daleq_status</code>, <code>daleq_list</code></td><td data-label="Use">One job, or the jobs.</td></tr>
-              <tr><td data-label="Tool"><code>daleq_logs</code></td><td data-label="Use"><code>tail_lines</code>, <code>offset</code>, or <code>grep</code> for only the matching lines, each as <code>OFFSET: line</code>.</td></tr>
+              <tr><td data-label="Tool"><code>daleq_logs</code></td><td data-label="Use"><code>tail_lines</code>, <code>offset</code>, or <code>grep</code> for only the matching lines, each as <code>OFFSET: line</code>; <code>context</code> adds the lines around each match, and <code>since</code>/<code>until</code> read by time.</td></tr>
               <tr><td data-label="Tool"><code>daleq_cancel</code></td><td data-label="Use">Stops the whole process tree.</td></tr>
               <tr><td data-label="Tool"><code>daleq_fetch</code></td><td data-label="Use">A finished job's kept outputs.</td></tr>
               <tr><td data-label="Tool"><code>daleq_tasks</code></td><td data-label="Use">The project's named tasks; run one with <code>task</code> and <code>task_args</code> on <code>daleq_submit</code>.</td></tr>
@@ -241,23 +295,31 @@ daleq service install|uninstall|status<span class="k">   # optional: keep the da
           </div>
           <p>A call with an argument the tool does not know, or without a required one, is an error that lists the valid names.</p>
           <h3>Configuration</h3>
-          <p>Configuration lives in <code>config.json</code> in daleq's home. Every key is optional: <code>cpu_budget</code>, <code>io_slots</code>, <code>aging_minutes</code>, <code>starvation_minutes</code>, <code>max_timeout_sec</code>, <code>reuse_hours</code>, <code>retain_days</code>, <code>max_log_mb</code>, <code>lease_sec</code>, <code>plugins</code> and more. Environment: <code>DALEQ_HOME</code>, <code>DALEQ_SOCKET</code>, <code>DALEQ_MAX_WAIT</code>, <code>DALEQ_HOOK</code>, <code>DALEQ_VOICE=plain</code>.</p>
+          <p>Configuration lives in <code>config.json</code> in daleq's home. Every key is optional: <code>cpu_budget</code>, <code>io_slots</code>, <code>aging_minutes</code>, <code>starvation_minutes</code>, <code>max_timeout_sec</code>, <code>reuse_hours</code>, <code>retain_days</code>, <code>max_log_mb</code>, <code>lease_sec</code>, <code>plugins</code>, <code>ready_hosts</code> and more. Environment: <code>DALEQ_HOME</code>, <code>DALEQ_SOCKET</code>, <code>DALEQ_MAX_WAIT</code>, <code>DALEQ_HOOK</code>, <code>DALEQ_WATCH=off</code>, <code>DALEQ_GUARD_TESTS</code>, <code>DALEQ_VERIFY_WAIT=SEC</code>, <code>DALEQ_VOICE=plain</code>.</p>
         </section>
         <section aria-labelledby="claude-code">
           <h2 id="claude-code"><a href="#claude-code">Claude Code integration</a></h2>
           <h3>The plugin</h3>
-          <p>The plugin brings four things: the MCP server (<code>daleq mcp</code>), the hook (<code>daleq hook pretooluse</code>), the <code>daleq</code> skill that tells the agent when and how to use it, and <code>/daleq-status</code>. <code>/daleq-setup</code> installs the binary.</p>
+          <p>The plugin brings the MCP server (<code>daleq mcp</code>), the hooks (<code>daleq hook pretooluse</code>, and <code>daleq hook stop</code> for the verify gate), the <code>daleq</code> skill that tells the agent when and how to use it, a monitor that reports job events (<code>daleq watch</code>), and <code>/daleq-status</code>. <code>/daleq-setup</code> installs the binary. The monitor comes only with the plugin.</p>
           <h3>The hook</h3>
-          <p>The hook turns away Bash and PowerShell commands that never end or only wait: dev servers, <code>tail -f</code> and <code>logs -f</code>, watch modes, <code>sleep</code>s of a minute or more, polling loops. It points the agent to daleq instead.</p>
+          <p>The hook turns away Bash and PowerShell commands that never end or only wait: <code>tail -f</code> and <code>logs -f</code>, <code>sleep</code>s of a minute or more, polling loops. It points the agent to daleq instead.</p>
           <ul>
             <li>It looks only at code. Quoted strings, heredoc bodies and comments are text, so a commit message that mentions <code>sleep 5</code> or <code>--watch</code> passes.</li>
             <li>The bodies of <code>bash -c '…'</code>, <code>sh -c "…"</code> and <code>powershell -Command '…'</code> are code and are checked.</li>
-            <li><code>sudo</code>, <code>env</code>, <code>VAR=value</code>, <code>nohup</code>, <code>npx</code> and subshell parentheses in front of a command do not hide it; <code>timeout N</code> in front lets it through when N is under a minute.</li>
             <li><code>--help</code> and <code>--version</code> always pass, and so do <code>docker compose up -d</code> and <code>up --wait</code>.</li>
             <li>To run one command directly, add <code># daleq:allow</code> to it. <code>DALEQ_HOOK=off</code> turns the hook off everywhere. <code>DALEQ_HOOK=strict</code> also sends every background Bash or PowerShell run to daleq.</li>
           </ul>
+          <h3>Dev servers are started as jobs</h3>
+          <p>A dev server or watcher that is the whole Bash command (<code>npm run dev</code>, <code>pnpm dev</code>, <code>vite</code>, <code>next dev</code>, <code>tsc --watch</code>, <code>vitest --watch</code> and others) is not turned away. The hook replaces it with:</p>
+          <div class="cmd"><pre><code>daleq submit --kind io --here --ready-on '…' --until-ready --max-wait 110 -- &lt;the command&gt;</code></pre></div>
+          <ul>
+            <li>The call returns when the server is up, and the agent is told that it has a job to follow and to cancel.</li>
+            <li>Claude Code runs the replacement without asking only where it would run a <code>daleq submit</code> unasked anyway: your settings allow it (<code>Bash(daleq submit:*)</code> or a wider rule), or the session runs with bypassPermissions. Otherwise it asks you, showing the <code>daleq submit</code> and that the hook rewrote the command.</li>
+            <li>The hook replaces a command only when no Bash deny or ask rule of yours matches it, the command is plain words, and it is the Bash tool, and not on Windows. PowerShell commands are always turned away.</li>
+            <li><code>DALEQ_HOOK=deny</code> turns the replacing off; modes combine with a comma (<code>DALEQ_HOOK=strict,deny</code>).</li>
+          </ul>
           <h3>The skill</h3>
-          <p>The skill tells the agent not to run in Bash anything that may take more than a minute, never ends on its own, or waits for something, and not to use Bash <code>run_in_background</code> for them either. It teaches the submit, wait, logs and cancel loop, and how to choose options:</p>
+          <p>The skill tells the agent not to run in Bash anything that may take more than a minute, never ends on its own, or waits for something. It teaches the submit, wait, logs and cancel loop, that job events come on their own with the plugin, and how to choose options:</p>
           <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Situation / Options">
             <table class="cols-2">
               <thead><tr><th scope="col">Situation</th><th scope="col">Options</th></tr></thead>
@@ -265,12 +327,15 @@ daleq service install|uninstall|status<span class="k">   # optional: keep the da
               <tr><td data-label="Situation">Build or test suite</td><td data-label="Options"><code>kind: cpu</code>, <code>weight</code> 2–4 for heavy builds, 1 for lint/unit tests</td></tr>
               <tr><td data-label="Situation">Download, install, API polling</td><td data-label="Options"><code>kind: io</code></td></tr>
               <tr><td data-label="Situation">Dev server, emulator</td><td data-label="Options"><code>kind: io</code>, <code>ready_on</code>, then <code>daleq_wait</code> with <code>until_ready: true</code>; <code>daleq_cancel</code> when done</td></tr>
+              <tr><td data-label="Situation">Server that logs nothing reliable</td><td data-label="Options">a ready probe: <code>ready_http: "http://localhost:3000/health"</code>, <code>ready_tcp: "localhost:5432"</code>, or <code>ready_cmd: "pg_isready -q"</code></td></tr>
               <tr><td data-label="Situation">Fail fast on a known fatal line</td><td data-label="Options"><code>fail_on: "FATAL|npm ERR!|error: linker"</code></td></tr>
               <tr><td data-label="Situation">Legitimately silent for long</td><td data-label="Options"><code>idle_timeout_sec: 1800</code> (0 = off)</td></tr>
               <tr><td data-label="Situation">Two jobs must not touch the same thing</td><td data-label="Options"><code>locks: [{"name": "repo/node_modules"}]</code></td></tr>
               </tbody>
             </table>
           </div>
+          <h3>The Stop hook and the test guard</h3>
+          <p><code>daleq hook stop</code> is the verify gate; without <code>[verify]</code> it does nothing and prints nothing. The test guard needs the hook to run for the file tools: the plugin's hook does (matcher <code>^(Bash|PowerShell|Edit|Write|MultiEdit|NotebookEdit)$</code>), and so does the one <code>daleq init --no-plugin</code> writes. Both are described under <a href="#concepts">Concepts</a>.</p>
           <h3>After a pause or in a new session</h3>
           <p>The agent resubmits the same command. If it is still running, or succeeded and the source tree is unchanged, daleq attaches to that job (<code>"attached": true</code>) instead of running it again. <code>force: true</code> reruns a success on purpose.</p>
         </section>
@@ -292,6 +357,12 @@ daleq service install|uninstall|status<span class="k">   # optional: keep the da
           <p>The socket is <code>daleq.sock</code> in daleq's home, or <code>$DALEQ_SOCKET</code>. When daleq has to put it in a short directory instead, clients refuse to connect when that directory is not yours, is a symlink, or is open to others.</p>
           <h3>Clusters</h3>
           <p><code>cluster init</code> creates a small certificate authority. A join token works once, and from then on every call is mutual TLS (TLS 1.3). Nothing is installed or opened beyond the coordinator's listening port (<code>--listen</code>, default <code>:7787</code>). The machines of a cluster trust each other: any of them can submit, cancel and read any job.</p>
+          <h3>The hook approves nothing you have not</h3>
+          <p>When the hook rewrites a dev server command into a <code>daleq submit</code>, Claude Code runs it unasked only where your own rules already allow a <code>daleq submit</code>. In dontAsk mode the command is turned away. A command the test guard turns away is never rewritten.</p>
+          <h3>Ready probes stay on the machine</h3>
+          <p><code>ready_http</code> and <code>ready_tcp</code> reach only the machine the job runs on (<code>localhost</code>, <code>127.0.0.1</code>, <code>::1</code>), so a job description cannot make daleq probe your network. To allow other hosts, list them in <code>config.json</code>: <code>"ready_hosts": ["db.internal"]</code>. <code>ready_cmd</code> runs like the job's command, and Claude Code Bash deny rules apply to it as to the command.</p>
+          <h3>The test guard is a guard rail, not a boundary</h3>
+          <p>Every source can only turn the guard on: <code>tests = true</code> in the committed <code>.daleq.toml</code>, in your own <code>.daleq.local.toml</code>, or <code>DALEQ_GUARD_TESTS=on</code> in your environment. A repository can ask for the guard, but nothing it carries can switch off yours. <code>DALEQ_HOOK=off</code> does not turn the guard off. For a check that cannot be stepped around, run <code>scripts/check-test-integrity.sh</code> in CI.</p>
         </section>
         <section aria-labelledby="troubleshooting">
           <h2 id="troubleshooting"><a href="#troubleshooting">Troubleshooting</a></h2>
@@ -307,6 +378,10 @@ daleq service install|uninstall|status<span class="k">   # optional: keep the da
               <tr><td class="wrap-code" data-label="Symptom">A submit is refused with exit 64</td><td data-label="What to do">A bad request, or the command matches a Claude Code deny rule. Do not rephrase it to get past the rule.</td></tr>
               <tr><td class="wrap-code" data-label="Symptom">A job runs in the wrong tree</td><td data-label="What to do">Over MCP, always pass <code>cwd</code>: without it the job runs where the daleq MCP server started, which in a worktree is another tree.</td></tr>
               <tr><td class="wrap-code" data-label="Symptom">Bash syntax fails on Windows</td><td data-label="What to do">The default shell is <code>cmd.exe</code>. Pass <code>--shell bash</code> (Git for Windows' bash, with pipefail) or write the command for cmd.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">The hook starts some commands as daleq jobs itself</td><td data-label="What to do">That is the rewrite of plain dev server and watcher commands. Follow the job with <code>daleq logs ID</code> and <code>daleq cancel ID</code> when done. <code>DALEQ_HOOK=deny</code> turns the replacing off.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">Claude is sent back to work when it wanted to stop</td><td data-label="What to do">The project has a verify gate (<code>[verify]</code> in <code>.daleq.toml</code>) and one of its tasks fails: the message names the job. It gives up by itself after 3 rounds.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">The test guard blocks an edit</td><td data-label="What to do">The project (or you) turned it on, and only you can put tests in scope, by starting the session with <code>DALEQ_GUARD_TESTS=off</code>.</td></tr>
+              <tr><td class="wrap-code" data-label="Symptom">No job event lines arrive</td><td data-label="What to do">The monitor comes only with the plugin and does not start in <code>claude -p</code> runs. <code>daleq_wait</code> and <code>daleq_status</code> always work.</td></tr>
               <tr><td class="wrap-code" data-label="Symptom">Anything else</td><td data-label="What to do"><code>daleq doctor</code> names what is wrong. The daemon's log is <code>daemon.log</code> in daleq's home, and each job's supervisor log is <code>jobs/&lt;id&gt;/supervisor.log</code>.</td></tr>
               </tbody>
             </table>

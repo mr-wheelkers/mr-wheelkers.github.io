@@ -184,7 +184,7 @@
             <li><strong>They run on your machine.</strong> The board and the review page are served on 127.0.0.1. The daemons answer on a Unix socket, and the Godot harness on localhost with a per-session token.</li>
             <li><strong>State is plain files.</strong> A daleq job is a folder with <code>output.log</code> in it. A mark is one JSON file. A review is <code>manifest.json</code> and <code>feedback.json</code>. You can read all of it without the tool.</li>
             <li><strong>A project adopts a tool with one command.</strong> <code>daleq init</code>, <code>drawingboard init</code>, <code>imgcompare init</code> and <code>pilot init</code> each prepare a project, can be run again safely, and take <code>--dry-run</code>.</li>
-            <li><strong>Claude is taught, not left to guess.</strong> daleq, drawingboard, imgcompare and simq each bring a skill; daleq, drawingboard and imgcompare add hooks. godot-pilot is a CLI whose output is written for an agent.</li>
+            <li><strong>Claude is taught, not left to guess.</strong> daleq, drawingboard, imgcompare and simq each bring a skill; daleq, drawingboard and imgcompare add hooks and, as plugins, a monitor that tells a live session when a job ends, a mark changes or a review is done. godot-pilot is a CLI whose output is written for an agent.</li>
             <li><strong>Little leaves the machine.</strong> daleq has no telemetry and makes no network connections, except between machines you join into a cluster yourself. drawingboard has no accounts and no cloud. godot-pilot sends only screenshots of seeded game content to Jev, and only when Jev is enabled.</li>
           </ul>
         </div>

@@ -96,9 +96,10 @@
         </figure>
         <aside class="plate" aria-label="Facts about imgcompare">
           <dl>
+            <dt>Version</dt><dd>0.3.0</dd>
             <dt>Needs</dt><dd>Node 20+. It has no dependencies.</dd>
             <dt>Built as</dt><dd>A CLI that serves one page on 127.0.0.1.</dd>
-            <dt>Claude Code</dt><dd>A skill and two hooks, from the plugin or from <code>imgcompare init</code>.</dd>
+            <dt>Claude Code</dt><dd>A plugin (a skill, two hooks, a monitor, <code>imgcompare</code> on Claude's PATH) or <code>imgcompare init</code>.</dd>
             <dt>Storage</dt><dd><code>manifest.json</code> and <code>feedback.json</code> next to your images.</dd>
             <dt>Licence</dt><dd>Apache-2.0</dd>
             <dt>Status</dt><dd><span class="badge" data-status="imgcompare">Not public yet</span></dd>
@@ -115,8 +116,8 @@
           <li>It serves the page with <code>imgcompare serve review/manifest.json --port 8790</code> and gives you the URL.</li>
           <li>You draw Like and Don't like marks, vote Stay or Change, pick the designs you like more and say what to take from each.</li>
           <li>You press "I'm done". Everything is already saved in <code>feedback.json</code> next to the manifest.</li>
-          <li>Claude reads it back with <code>imgcompare summary review/manifest.json</code>.</li>
-          <li>For a new round, Claude replaces the images and re-runs <code>scan … --force</code>. Images that keep their file name keep their marks.</li>
+          <li>With the plugin, a monitor tells Claude at once, and Claude runs <code>imgcompare summary review/manifest.json</code>. Without it, Claude hears with your next message.</li>
+          <li>The summary ends with a <code>## Next round</code> checklist when you asked for changes. Claude replaces the images and re-runs <code>scan … --force</code>; images that keep their file name keep their marks.</li>
         </ol>
       </div>
     </section>
@@ -139,9 +140,11 @@
             <li>Draw <strong>rectangles</strong> (drag) or <strong>markers</strong> (click) on any image, tagged Like or Don't like. Each mark gets a number and its own note.</li>
             <li>Vote <strong>Stay</strong> or <strong>Change</strong> on each image and leave a comment.</li>
             <li>Answer <strong>"Which designs do you like more?"</strong> for each group. When you pick several, the page asks what to take from each pick: a blend.</li>
+            <li><strong>Compare two pictures</strong> in the large view: side by side, overlay with opacity, a draggable slider, or a pixel difference.</li>
             <li><strong>Step through animations frame by frame.</strong> Marks, votes and comments then apply to that frame only.</li>
-            <li><strong>Step through keyframe sequences</strong>: a group named <code>kf_01.png…</code> gets a Play button and the question "Which frames work best?".</li>
-            <li>Everything autosaves to the browser's localStorage and to <code>feedback.json</code>. Claude reads it back as Markdown or as JSON with <code>--json</code>.</li>
+            <li>See each picture's <strong>provenance</strong> (model, prompt, seed, cost, licence) when it has a <code>foo.prov.json</code> sidecar.</li>
+            <li>Review <strong>blind</strong> with <code>serve --blind</code>: shuffled candidates without names, next to the reference.</li>
+            <li>Everything autosaves to <code>feedback.json</code>. Claude reads it back as Markdown or as JSON with <code>--json</code>, with a checklist of what the next round must contain.</li>
           </ul>
         </div>
       </div>
@@ -153,9 +156,10 @@
         <div class="prose">
           <ol>
             <li><strong>Feedback on a single frame.</strong> Marks and votes on one frame of a strip or keyframe sequence, returned to the agent. No other tool found returns this.</li>
-            <li><strong>Like and Don't like marks, plus what to take from each pick.</strong> The output is a brief for the next round, not a ticket.</li>
+            <li><strong>Like and Don't like marks, plus what to take from each pick.</strong> The output is a brief for the next round, and its checklist is built by fixed rules, with no model involved.</li>
             <li><strong>Any images already on disk.</strong> One <code>scan</code>, no dependencies, localhost; the files stay in the repository.</li>
             <li><strong>Rounds that keep their marks.</strong> Feedback is kept by cell id, so images that keep their file name keep their marks.</li>
+            <li><strong>The owner's words are fenced.</strong> Claude reads the review between <code>BEGIN</code>/<code>END OWNER REVIEW &lt;id&gt;</code> lines, as data and not instructions, and saving needs a token made for each run.</li>
           </ol>
         </div>
       </div>
@@ -168,13 +172,14 @@
           <p>Showing variants, picking one and leaving a comment is a commodity. imgcompare exists for sprite and animation review, and for turning likes and dislikes into a brief. It is a small tool, not a product.</p>
           <h3>When not to use it</h3>
           <ul>
-            <li>You want visual regression: baseline against new. imgcompare has no overlay, slider or diff. Chromatic, Percy, Argos and reg-cli do that.</li>
+            <li>You want visual regression in CI: stored baselines and a build that fails. imgcompare compares two pictures for a person to judge. Chromatic, Percy, Argos and reg-cli do regression.</li>
             <li>You want the user to choose between two to four text options. Claude Code's AskUserQuestion needs no install.</li>
             <li>The designs were made in Claude Design. Review them there.</li>
-            <li>You need the feedback delivered the moment you finish. "Done" reaches Claude with your next prompt, or through <code>wait</code>.</li>
             <li>You need pixel-exact regions. Mark positions are percentages of the image, and Claude has to find the region from them.</li>
-            <li>You want several reviewers with accounts. There are none. <code>--host 0.0.0.0</code> opens the page to your network, and the README describes no login for it, so use it only on a network you trust.</li>
+            <li>You want several reviewers with accounts. There are none. With <code>--host 0.0.0.0 --lan</code>, everyone on the network can open the page and see the pictures and the feedback; saving still needs the token.</li>
+            <li>You use claude.ai or Cowork. They don't install a plugin that has a top-level <code>bin/</code> folder, so this plugin is for Claude Code only.</li>
           </ul>
+          <p>The "done" monitor depends on Claude Code monitors, which are experimental and only start in an interactive session. The <code>UserPromptSubmit</code> hook stays as the fallback.</p>
           <p class="small">Compared on 2026-11-19 from each tool's public page. Other tools change; check before you choose.</p>
         </div>
       </div>
@@ -188,8 +193,8 @@
           <p>As a Claude Code plugin, user-wide:</p>
           <div class="cmd"><pre><code>/plugin marketplace add mr-wheelkers/imgcompare
 /plugin install image-comparison@image-comparison</code></pre></div>
-          <p>Or per project, committed with the project: <code>imgcompare init</code>. Use either the plugin or <code>init</code>; <code>init</code> sees an enabled plugin and does not add duplicate hooks.</p>
-          <p>For the <code>imgcompare</code> command itself, run <code>scripts/install.sh</code> once in a checkout: it links <code>~/.local/bin/imgcompare</code>. Without it, <code>node bin/compare.mjs</code> takes the same commands.</p>
+          <p>With the plugin installed, Claude already has <code>imgcompare</code> on its PATH. Your own terminal doesn't get it: run <code>scripts/install.sh</code> once in a checkout, which links <code>~/.local/bin/imgcompare</code>.</p>
+          <p>Or per project, committed with the project: <code>imgcompare init</code>. Use either the plugin or <code>init</code>; <code>init</code> sees an enabled plugin and doesn't add duplicate hooks. With <code>init</code> alone there is no monitor.</p>
         </div>
       </div>
     </section>

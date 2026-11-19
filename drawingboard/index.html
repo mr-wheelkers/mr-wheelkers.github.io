@@ -95,9 +95,10 @@
         </figure>
         <aside class="plate" aria-label="Facts about drawingboard">
           <dl>
-            <dt>Runs on</dt><dd>macOS, where it is developed. It should work on Linux. On Windows the Claude terminal is not available yet.</dd>
+            <dt>Plugin version</dt><dd>0.1.0</dd>
+            <dt>Runs on</dt><dd>macOS, where it is developed. It should work on Linux. For Windows it is cross-compiled but not run by its author, and the Claude terminal is experimental there.</dd>
             <dt>Built as</dt><dd>One binary that serves a web UI on 127.0.0.1.</dd>
-            <dt>Claude Code</dt><dd>A skill, hooks and a <code>CLAUDE.md</code> section, installed by <code>drawingboard init</code>.</dd>
+            <dt>Claude Code</dt><dd>A skill and four hooks, from the plugin or from <code>drawingboard init</code>. The plugin adds a monitor.</dd>
             <dt>Storage</dt><dd>Plain JSON files in <code>drawingboard/</code>, committed with your code.</dd>
             <dt>Licence</dt><dd>Apache-2.0</dd>
             <dt>Status</dt><dd><span class="badge" data-status="drawingboard">Not public yet</span></dd>
@@ -111,9 +112,9 @@
         <h2 id="how">How it works</h2>
         <ol class="steps">
           <li>You place a mark on an element: a comment pin, a box or an ellipse, an arrow, a strike, "move this there". It is saved as one file on the element's id, with status <code>open</code>.</li>
-          <li>Claude reads the open marks with <code>drawingboard marks</code> and the screen as a text outline with <code>drawingboard show</code>. A hook tells it, with your next prompt, what you changed on the board.</li>
+          <li>Claude hears what you changed with your next prompt or, through the plugin's monitor, while it is still working. It reads the open marks with <code>drawingboard marks</code> and the screen as a text outline with <code>drawingboard show</code>.</li>
           <li>Claude changes the screen with <code>drawingboard patch</code>. The canvas updates live.</li>
-          <li>Claude replies on the mark and sets it to <code>addressed</code>.</li>
+          <li>Claude replies on the mark and sets it to <code>addressed</code>. If it declines, <code>wontfix</code> needs a reply saying why.</li>
           <li>If you agree, you set it to Resolved. Claude never resolves your marks: the CLI refuses it.</li>
         </ol>
       </div>
@@ -136,11 +137,12 @@
           <ul>
             <li><strong>Mockup screens</strong> built from a catalog of typed placeholders for five platforms: macOS, Windows, iOS, Android and web. Architecture diagrams use the same canvas.</li>
             <li><strong>Marks</strong>: comment pins, boxes and ellipses, arrows, strikes, "move this there", text on the canvas and pen strokes. Each is one file with a status.</li>
+            <li><strong>A watch for your marks</strong>: <code>drawingboard marks --watch</code> waits until you add or change a mark, prints it and exits. The plugin's monitor runs it, so a mark reaches a live session at once.</li>
             <li><strong>Layouts as hints</strong>: a stack, grid or flex tells Claude how the real app should behave, so it picks the framework's natural equivalent instead of guessing.</li>
+            <li><strong>From mockup to code</strong>: <code>drawingboard handoff</code> prints a build brief for a screen, and <code>drawingboard built</code> records that it is built; <code>show</code> and <code>status</code> then say what changed since.</li>
             <li><strong>A task board</strong> where each column is a folder and each task is one file. Refs link a task to screens, elements, marks and other tasks.</li>
             <li><strong>A Claude terminal</strong> docked in the app: a real Claude Code session in your project. "Ask Claude" buttons type a precise reference into it and never press Enter.</li>
             <li><strong>Checkpoints</strong>: named snapshots of the board that you can diff and restore. In git they are refs of their own and never touch your branch.</li>
-            <li><strong>Notes, mind maps, images and PNG export</strong> next to the screens, and a Doctor tab with project metrics.</li>
           </ul>
         </div>
       </div>
@@ -151,10 +153,10 @@
         <h2 id="edge">The edge</h2>
         <div class="prose">
           <ol>
-            <li><strong>Marks are review data, not pixels.</strong> Each has a kind, the id of the element it is on, a snapshot of what was marked, replies and a status. Claude may set <code>addressed</code>; <code>resolved</code> is your call.</li>
-            <li><strong>Typed native screens.</strong> The catalog models macOS, Windows, iOS and Android controls as well as web. A native app has no DOM to click on, so tools that annotate a running web page do not reach it.</li>
-            <li><strong>Claude hears only what you changed.</strong> A hook adds one line to your prompt when the board changed other than by Claude. Claude's own work is not reported back to it.</li>
-            <li><strong>Everything is a file in the repository.</strong> One mark, one task, one screen per file, readable and committed with the code.</li>
+            <li><strong>Marks are review data on mockups that exist before any code.</strong> Each has a kind, an element id, a snapshot, replies, and a lifecycle in which Claude may set <code>addressed</code> but never <code>resolved</code>.</li>
+            <li><strong>Typed native screens</strong> for macOS, Windows, iOS and Android, which a "click the running page" tool cannot reach.</li>
+            <li><strong>Claude hears only what you changed</strong>, with your next prompt or, through the plugin's monitor, while Claude is still working.</li>
+            <li><strong>Links from a mockup to the code that implements it</strong>, with drift in both directions.</li>
           </ol>
         </div>
       </div>
@@ -164,17 +166,27 @@
       <div class="wrap split">
         <h2 id="compare">How it compares</h2>
         <div class="prose">
-          <p>Canvases with comments are common now, and most of them are in the cloud. drawingboard is narrow on purpose: low-fidelity screens, drawn before the code, reviewed with marks that stay in the repository.</p>
+          <p>drawingboard is a narrow tool: for one developer who builds a native desktop or mobile app (or a web one) with Claude Code and wants to sketch the intent first and review it without screenshots. It works with Claude Code only. Other tools do neighbouring jobs, some of them better.</p>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Tool / What it does better / What drawingboard has that it lacks">
+            <table class="cols-many">
+              <thead><tr><th scope="col">Tool</th><th scope="col">What it does better</th><th scope="col">What drawingboard has that it lacks</th></tr></thead>
+              <tbody>
+              <tr><td data-label="Tool">Claude Design</td><td data-label="What it does better">Generates the design itself, checks it against your brand, exports PDF, PPTX and HTML, and needs no install.</td><td data-label="What drawingboard has that it lacks">It is cloud only and makes hi-fi web output. No catalog of native platforms; comments are not files in your repo.</td></tr>
+              <tr><td data-label="Tool">Agentation</td><td data-label="What it does better">Works on the real, running UI: click an element, write a note. It has an <code>acknowledged</code> state and webhooks, which drawingboard has not.</td><td data-label="What drawingboard has that it lacks">It needs a running React app and is desktop web only, so it does not reach a mockup or a native app.</td></tr>
+              <tr><td data-label="Tool">Pencil</td><td data-label="What it does better">A real design canvas with variables and tokens, a two-way local MCP server, a headless CLI, and many agents.</td><td data-label="What drawingboard has that it lacks">No lifecycle for review marks that could be found. It is centred on the web, and the app is closed.</td></tr>
+              <tr><td data-label="Tool">Backlog.md</td><td data-label="What it does better">The better task board: tasks as files in the repo, a CLI, MCP and a local web kanban, five agents.</td><td data-label="What drawingboard has that it lacks">No mockups and no marks.</td></tr>
+              </tbody>
+            </table>
+          </div>
           <h3>When not to use it</h3>
           <ul>
-            <li>You want polished or generated designs. Claude Design, Pencil and Stitch do high fidelity; drawingboard draws sketches.</li>
-            <li>You want to point at a running web app. Agentation and the element pickers in Cursor and the Claude Code desktop app work on the real page.</li>
-            <li>You only want tasks as files. Backlog.md does that alone, and for more agents.</li>
-            <li>You only want diagrams. draw.io is the better diagram editor.</li>
-            <li>You work in a team on one board. There are no accounts and no cloud; it is built for one developer and Claude.</li>
-            <li>You use another coding agent. It is tied to Claude Code.</li>
+            <li>You want polished web designs made for you. Use Claude Design or Pencil; they go well beside it.</li>
+            <li>You want to point at a running web app. Agentation works on the real page.</li>
+            <li>You only want tasks as files. Backlog.md is the better task board.</li>
+            <li>You work in a team on one board. There are no accounts and no cloud, and you should not run the app on a machine you share.</li>
+            <li>You use another coding agent. It works with Claude Code only.</li>
           </ul>
-          <p>It also does a lot for one maintainer: board, tasks, terminal and Doctor in one binary. Expect the marks and the mockup catalog to get the most care.</p>
+          <p>The plugin's monitor depends on Claude Code monitors, an experimental feature that does not start in <code>-p</code> runs. Where it is missing nothing is lost: the prompt notice reports the same marks with the next prompt.</p>
           <p class="small">Compared on 2026-11-19 from each tool's public page. Other tools change; check before you choose.</p>
         </div>
       </div>
@@ -184,11 +196,16 @@
       <div class="wrap split">
         <h2 id="install">Install</h2>
         <div class="prose">
-          <p class="private-note" data-private="drawingboard"><strong>Not public yet.</strong> There is no public repository or release yet. This is how it will work once there is one.</p>
-          <p>There is no plugin for drawingboard. It is one binary: download it for your platform when a release is available, or build it from the repository with Go and Node. Node is only needed to build the UI; the binary embeds it.</p>
+          <p class="private-note" data-private="drawingboard"><strong>Not public yet.</strong> There is no public repository or release yet. These are the commands as they will be once there is one.</p>
+          <p>Install the binary first. Download it for your platform (macOS or Linux) from the releases, once one is published; the install script picks the right one, checks its checksum and puts it in <code>~/.local/bin</code>:</p>
+          <div class="cmd"><pre><code>curl -fsSL https://github.com/mr-wheelkers/drawingboard/releases/latest/download/install.sh | sh</code></pre></div>
+          <p>Or build it from the repository with Go and Node. Node is only needed to build the UI; the binary embeds it.</p>
           <div class="cmd"><pre><code>make build<span class="k">       # bin/drawingboard</span>
 make install<span class="k">     # copies it to ~/.local/bin/drawingboard</span></code></pre></div>
-          <p>Check with <code>drawingboard help</code>. The check hook that <code>init</code> installs runs <code>drawingboard</code> by name, so keep it on your PATH. You need Claude Code (<code>claude</code> on your PATH) for the Claude parts; the board itself works without it.</p>
+          <p>Then either add the Claude Code plugin, which brings the skill, the hooks and the monitor to every project that has a <code>drawingboard/</code> folder:</p>
+          <div class="cmd"><pre><code>/plugin marketplace add mr-wheelkers/drawingboard
+/plugin install drawingboard@drawingboard</code></pre></div>
+          <p>or let <code>drawingboard init</code> write the skill and the hooks into one project. Use one or the other. The plugin does not contain the binary: its hooks, its skill and its monitor run <code>drawingboard</code> from your PATH.</p>
         </div>
       </div>
     </section>
