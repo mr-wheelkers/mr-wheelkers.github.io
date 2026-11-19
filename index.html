@@ -1,1 +1,225 @@
-Some basic info
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Local tools for working with Claude Code</title>
+  <meta name="description" content="daleq, drawingboard, imgcompare, godot-pilot and simq: five local tools for working with Claude Code, by Sviatoslav Kolesnyk.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect x='1.0' y='5' width='5' height='24' fill='%23F2B416'/%3E%3Crect x='7.6' y='5' width='5' height='24' fill='%232B66D9'/%3E%3Crect x='14.2' y='5' width='5' height='24' fill='%23C92A74'/%3E%3Crect x='20.8' y='5' width='5' height='24' fill='%230B7A6F'/%3E%3Crect x='27.4' y='5' width='5' height='24' fill='%23E8692F'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/site.css">
+  <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href=""><svg class="rack" viewBox="0 0 34 22" aria-hidden="true" focusable="false"><rect x="1.0" y="1" width="5" height="20" fill="#F2B416"/><rect x="7.6" y="1" width="5" height="20" fill="#2B66D9"/><rect x="14.2" y="1" width="5" height="20" fill="#C92A74"/><rect x="20.8" y="1" width="5" height="20" fill="#0B7A6F"/><rect x="27.4" y="1" width="5" height="20" fill="#E8692F"/></svg><span>mr-wheelkers tools</span></a>
+      <nav class="site-nav" aria-label="Site">
+        <ul>
+        <li data-tool="daleq"><a href="daleq/">daleq</a></li>
+        <li data-tool="drawingboard"><a href="drawingboard/">drawingboard</a></li>
+        <li data-tool="imgcompare"><a href="imgcompare/">imgcompare</a></li>
+        <li data-tool="godot-pilot"><a href="godot-pilot/">godot-pilot</a></li>
+        <li data-tool="simq"><a href="simq/">simq</a></li>
+        <li class="docs-link"><a href="docs/">Docs</a></li>
+        </ul>
+      </nav>
+      <button class="theme-btn" type="button" hidden>Dark theme</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-text">
+          <h1>Five local tools for working with Claude Code</h1>
+          <p class="lede">A job daemon, a design board, a picture review page, a Godot harness and an iOS test queue. Each runs on your own machine and keeps its state in plain files you can read.</p>
+          <p class="status-line"><a href="#tools">See the tools</a> <a href="docs/">Documentation</a></p>
+        </div>
+        <figure class="hero-figure">
+    <svg viewBox="0 0 480 500" role="img" aria-labelledby="fam-t fam-d">
+      <title id="fam-t">How the five tools sit around Claude Code</title>
+      <desc id="fam-d">You and Claude Code both use drawingboard and imgcompare. Claude Code runs work through daleq, godot-pilot and simq. simq is moving into daleq&#x27;s iOS plugin. Everything is inside your machine.</desc>
+      <path class="d-flow" d="M215.0 50.0 L215.0 68.0 Q215.0 80.0 203.0 80.0 L140.0 80.0 Q128.0 80.0 128.0 92.0 L128.0 105.0"/>
+      <path class="d-flow" d="M265.0 50.0 L265.0 68.0 Q265.0 80.0 277.0 80.0 L340.0 80.0 Q352.0 80.0 352.0 92.0 L352.0 105.0"/>
+      <path class="d-flow" d="M128.0 174.0 L128.0 193.0 Q128.0 205.0 140.0 205.0 L193.0 205.0 Q205.0 205.0 205.0 217.0 L205.0 229.0"/>
+      <path class="d-pulse" d="M128.0 174.0 L128.0 193.0 Q128.0 205.0 140.0 205.0 L193.0 205.0 Q205.0 205.0 205.0 217.0 L205.0 229.0"/>
+      <path class="d-flow" d="M352.0 174.0 L352.0 193.0 Q352.0 205.0 340.0 205.0 L287.0 205.0 Q275.0 205.0 275.0 217.0 L275.0 229.0"/>
+      <path class="d-pulse" d="M352.0 174.0 L352.0 193.0 Q352.0 205.0 340.0 205.0 L287.0 205.0 Q275.0 205.0 275.0 217.0 L275.0 229.0"/>
+      <path class="d-flow" d="M190.0 292.0 L190.0 312.0 Q190.0 324.0 178.0 324.0 L104.0 324.0 Q92.0 324.0 92.0 336.0 L92.0 349.0"/>
+      <path class="d-pulse" d="M190.0 292.0 L190.0 312.0 Q190.0 324.0 178.0 324.0 L104.0 324.0 Q92.0 324.0 92.0 336.0 L92.0 349.0"/>
+      <path class="d-flow" d="M240.0 292.0 L240.0 349.0"/>
+      <path class="d-pulse" d="M240.0 292.0 L240.0 349.0"/>
+      <path class="d-flow" d="M290.0 292.0 L290.0 312.0 Q290.0 324.0 302.0 324.0 L376.0 324.0 Q388.0 324.0 388.0 336.0 L388.0 349.0"/>
+      <path class="d-pulse" d="M290.0 292.0 L290.0 312.0 Q290.0 324.0 302.0 324.0 L376.0 324.0 Q388.0 324.0 388.0 336.0 L388.0 349.0"/>
+      <path class="d-flow is-dashed" d="M388.0 418.0 L388.0 446.0 Q388.0 458.0 376.0 458.0 L104.0 458.0 Q92.0 458.0 92.0 446.0 L92.0 425.0"/>
+      <rect class="d-bound" x="8" y="64" width="464" height="428" rx="14"/>
+      <text class="d-s is-muted" x="24" y="96" text-anchor="start">your machine</text>
+      <rect class="d-plate" x="180" y="8" width="120" height="42" rx="7"/>
+      <text class="d-t" x="240.0" y="34.5" text-anchor="middle">You</text>
+      <text class="d-s is-muted" x="240" y="100" text-anchor="middle">you and Claude both use these</text>
+      <g data-tool="drawingboard">
+      <rect class="d-fill" x="28" y="112" width="200" height="62" rx="7"/>
+      <text class="d-t is-on" x="128.0" y="140.0" text-anchor="middle">drawingboard</text>
+      <text class="d-s is-on" x="128.0" y="158.0" text-anchor="middle">design and task board</text>
+      </g>
+      <g data-tool="imgcompare">
+      <rect class="d-fill" x="252" y="112" width="200" height="62" rx="7"/>
+      <text class="d-t is-on" x="352.0" y="140.0" text-anchor="middle">imgcompare</text>
+      <text class="d-s is-on" x="352.0" y="158.0" text-anchor="middle">picture review</text>
+      </g>
+      <rect class="d-plate" x="150" y="236" width="180" height="56" rx="7"/>
+      <text class="d-t" x="240.0" y="269.5" text-anchor="middle">Claude Code</text>
+      <g data-tool="daleq">
+      <rect class="d-fill" x="28" y="356" width="128" height="62" rx="7"/>
+      <text class="d-t is-on" x="92.0" y="384.0" text-anchor="middle">daleq</text>
+      <text class="d-s is-on" x="92.0" y="402.0" text-anchor="middle">long jobs</text>
+      </g>
+      <g data-tool="godot-pilot">
+      <rect class="d-fill" x="176" y="356" width="128" height="62" rx="7"/>
+      <text class="d-t is-on" x="240.0" y="384.0" text-anchor="middle">godot-pilot</text>
+      <text class="d-s is-on" x="240.0" y="402.0" text-anchor="middle">Godot harness</text>
+      </g>
+      <g data-tool="simq">
+      <rect class="d-fill" x="324" y="356" width="128" height="62" rx="7"/>
+      <text class="d-t is-on" x="388.0" y="384.0" text-anchor="middle">simq</text>
+      <text class="d-s is-on" x="388.0" y="402.0" text-anchor="middle">iOS test queue</text>
+      </g>
+      <text class="d-s is-muted" x="240" y="444" text-anchor="middle">Claude runs work through these</text>
+      <text class="d-s" x="240" y="480" text-anchor="middle">simq is moving into daleq&#x27;s iOS plugin</text>
+      <path class="d-head" d="M128.0 112.0 L121.5 99.0 L134.5 99.0 Z"/>
+      <path class="d-head" d="M352.0 112.0 L345.5 99.0 L358.5 99.0 Z"/>
+      <path class="d-head" d="M205.0 236.0 L198.5 223.0 L211.5 223.0 Z"/>
+      <path class="d-head" d="M275.0 236.0 L268.5 223.0 L281.5 223.0 Z"/>
+      <path class="d-head" d="M92.0 356.0 L85.5 343.0 L98.5 343.0 Z"/>
+      <path class="d-head" d="M240.0 356.0 L233.5 343.0 L246.5 343.0 Z"/>
+      <path class="d-head" d="M388.0 356.0 L381.5 343.0 L394.5 343.0 Z"/>
+      <path class="d-head" d="M92.0 418.0 L98.5 431.0 L85.5 431.0 Z"/>
+    </svg>
+        </figure>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="tools">
+      <div class="wrap">
+        <h2 id="tools">The tools</h2>
+        <ul class="tool-rows">
+          <li class="tool-row" data-tool="daleq">
+            <div>
+              <h3><a href="daleq/">daleq</a></h3>
+              <p class="what">A small local daemon that runs an agent's long commands for it: builds, test suites, dev servers.</p>
+            </div>
+            <div>
+              <p>It hands back a job id at once, runs the command under watchdogs, and keeps every output and outcome on disk. A build started before a rate-limit pause still has its result afterwards, and the same command on an unchanged tree is not run twice.</p>
+              <p class="links"><span class="badge" data-status="daleq">Not public yet</span> <a href="daleq/">About daleq</a> <a href="docs/daleq/">Documentation</a> <a data-repo="daleq" href="#" hidden>Source on GitHub</a></p>
+            </div>
+          </li>
+          <li class="tool-row" data-tool="drawingboard">
+            <div>
+              <h3><a href="drawingboard/">drawingboard</a></h3>
+              <p class="what">A design and task board that lives inside your project and is shared by you and Claude.</p>
+            </div>
+            <div>
+              <p>When you circle a button and write "too small, make it primary", that is saved as data on the button's id, not as pixels. Claude reads the mark without a screenshot, changes the screen and sets the mark to <code>addressed</code>. Only you resolve it.</p>
+              <p class="links"><span class="badge" data-status="drawingboard">Not public yet</span> <a href="drawingboard/">About drawingboard</a> <a href="docs/drawingboard/">Documentation</a> <a data-repo="drawingboard" href="#" hidden>Source on GitHub</a></p>
+            </div>
+          </li>
+          <li class="tool-row" data-tool="imgcompare">
+            <div>
+              <h3><a href="imgcompare/">imgcompare</a></h3>
+              <p class="what">A local review page and a CLI for comparing pictures: art directions, mockups, screenshots, icons.</p>
+            </div>
+            <div>
+              <p>You draw Like and Don't like marks on any image, vote, pick the designs you prefer and say what to take from each. It steps animations frame by frame, so a note can sit on one frame. Claude reads it all back as Markdown or JSON.</p>
+              <p class="links"><span class="badge" data-status="imgcompare">Not public yet</span> <a href="imgcompare/">About imgcompare</a> <a href="docs/imgcompare/">Documentation</a> <a data-repo="imgcompare" href="#" hidden>Source on GitHub</a></p>
+            </div>
+          </li>
+          <li class="tool-row" data-tool="godot-pilot">
+            <div>
+              <h3><a href="godot-pilot/">godot-pilot</a></h3>
+              <p class="what">A test and debug harness that lets Claude drive a Godot .NET game and the Godot editor.</p>
+            </div>
+            <div>
+              <p>Runs are deterministic: the game advances only when stepped, with a fixed timestep, a seeded RNG and an injectable clock. Scenarios print failures only, and a release gate proves that none of the harness ships in an exported build. macOS and C# only. Jev (TypeSafe AI) is an optional, paid extra for visual checks.</p>
+              <p class="links"><span class="badge" data-status="godot-pilot">Not public yet</span> <a href="godot-pilot/">About godot-pilot</a> <a href="docs/godot-pilot/">Documentation</a> <a data-repo="godot-pilot" href="#" hidden>Source on GitHub</a></p>
+            </div>
+          </li>
+          <li class="tool-row" data-tool="simq">
+            <div>
+              <h3><a href="simq/">simq</a></h3>
+              <p class="what">A queue for iOS simulator tests.</p>
+            </div>
+            <div>
+              <p>Any number of sessions submit a test run. An always-on harness runs them one per simulator, with warm DerivedData, and skips the build when the source has not changed. It is being folded into daleq's iOS plugin, which reads the same <code>.simq.toml</code>.</p>
+              <p class="links"><span class="badge" data-status="simq">Not public yet</span> <a href="simq/">About simq</a> <a href="docs/simq/">Documentation</a> <a data-repo="simq" href="#" hidden>Source on GitHub</a></p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="fit">
+      <div class="wrap split">
+        <h2 id="fit">How they fit together</h2>
+        <div class="prose">
+          <p>Two of the tools are places where you and Claude look at the same thing. Three are ways for Claude to run something without getting stuck on it.</p>
+          <ul>
+            <li><strong>daleq runs the long jobs.</strong> Anything that may take more than a minute, never ends on its own, or only waits goes through it, so no session hangs on a process.</li>
+            <li><strong>drawingboard is the shared board.</strong> You sketch screens and keep tasks; Claude reads and edits the same files. When a project has a <code>.daleq.toml</code>, the board's Doctor tab shows a daleq card.</li>
+            <li><strong>imgcompare is picture review.</strong> When Claude has made several pictures, it serves them for you to mark and pick, then reads your feedback as the brief for the next round.</li>
+            <li><strong>godot-pilot is the Godot test and debug harness</strong>: input, frame stepping, screenshots, state and live C# eval, for the game and the editor.</li>
+            <li><strong>simq is the iOS simulator test queue.</strong> It is being folded into daleq: daleq's iOS plugin reads simq's <code>.simq.toml</code>, and its simulators keep the <code>simq-</code> names.</li>
+          </ul>
+          <p>None of them needs the others. Install the one whose problem you have.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="share">
+      <div class="wrap split">
+        <h2 id="share">What they share</h2>
+        <div class="prose">
+          <ul>
+            <li><strong>They run on your machine.</strong> The board and the review page are served on 127.0.0.1. The daemons answer on a Unix socket, and the Godot harness on localhost with a per-session token.</li>
+            <li><strong>State is plain files.</strong> A daleq job is a folder with <code>output.log</code> in it. A mark is one JSON file. A review is <code>manifest.json</code> and <code>feedback.json</code>. You can read all of it without the tool.</li>
+            <li><strong>A project adopts a tool with one command.</strong> <code>daleq init</code>, <code>drawingboard init</code>, <code>imgcompare init</code> and <code>pilot init</code> each prepare a project, can be run again safely, and take <code>--dry-run</code>.</li>
+            <li><strong>Claude is taught, not left to guess.</strong> daleq, drawingboard, imgcompare and simq each bring a skill; daleq, drawingboard and imgcompare add hooks. godot-pilot is a CLI whose output is written for an agent.</li>
+            <li><strong>Little leaves the machine.</strong> daleq has no telemetry and makes no network connections, except between machines you join into a cluster yourself. drawingboard has no accounts and no cloud. godot-pilot sends only screenshots of seeded game content to Jev, and only when Jev is enabled.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="status">
+      <div class="wrap split">
+        <h2 id="status">Status and licence</h2>
+        <div class="prose">
+          <p>A tool is public when its badge says so. Until then its repository is private or not published, and the install commands on this site are shown as they will be.</p>
+          <p>Every tool is licensed under Apache-2.0. They are written by Sviatoslav Kolesnyk.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>
+        <p>Local tools for working with Claude Code, by Sviatoslav Kolesnyk (<a href="https://github.com/mr-wheelkers">mr-wheelkers</a> on GitHub).</p>
+        <p>Every tool is licensed under Apache-2.0.</p>
+        <p class="small">These are independent tools. Claude Code is a product of Anthropic.</p>
+      </div>
+      <nav aria-label="Tools">
+        <p><strong>Tools</strong></p>
+        <ul><li><a href="daleq/">daleq</a></li><li><a href="drawingboard/">drawingboard</a></li><li><a href="imgcompare/">imgcompare</a></li><li><a href="godot-pilot/">godot-pilot</a></li><li><a href="simq/">simq</a></li></ul>
+      </nav>
+      <nav aria-label="Documentation">
+        <p><strong>Documentation</strong></p>
+        <ul><li><a href="docs/daleq/">daleq</a></li><li><a href="docs/drawingboard/">drawingboard</a></li><li><a href="docs/imgcompare/">imgcompare</a></li><li><a href="docs/godot-pilot/">godot-pilot</a></li><li><a href="docs/simq/">simq</a></li></ul>
+      </nav>
+    </div>
+  </footer>
+  <script src="assets/tools.js"></script>
+  <script src="assets/site.js"></script>
+</body>
+</html>
