@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>simq: a queue for iOS simulator tests</title>
+  <meta name="description" content="simq queues iOS simulator test runs from any number of sessions and runs them one per simulator with warm DerivedData. It is being folded into daleq&#x27;s iOS plugin.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect x='1.0' y='5' width='5' height='24' fill='%23F2B416'/%3E%3Crect x='7.6' y='5' width='5' height='24' fill='%232B66D9'/%3E%3Crect x='14.2' y='5' width='5' height='24' fill='%23C92A74'/%3E%3Crect x='20.8' y='5' width='5' height='24' fill='%230B7A6F'/%3E%3Crect x='27.4' y='5' width='5' height='24' fill='%23E8692F'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body data-tool="simq">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="../"><svg class="rack" viewBox="0 0 34 22" aria-hidden="true" focusable="false"><rect x="1.0" y="12" width="5" height="9" fill="#F2B416"/><rect x="7.6" y="12" width="5" height="9" fill="#2B66D9"/><rect x="14.2" y="12" width="5" height="9" fill="#C92A74"/><rect x="20.8" y="12" width="5" height="9" fill="#0B7A6F"/><rect x="27.4" y="1" width="5" height="20" fill="#E8692F"/></svg><span>mr-wheelkers tools</span></a>
+      <nav class="site-nav" aria-label="Site">
+        <ul>
+        <li data-tool="daleq"><a href="../daleq/">daleq</a></li>
+        <li data-tool="drawingboard"><a href="../drawingboard/">drawingboard</a></li>
+        <li data-tool="imgcompare"><a href="../imgcompare/">imgcompare</a></li>
+        <li data-tool="godot-pilot"><a href="../godot-pilot/">godot-pilot</a></li>
+        <li data-tool="simq"><a href="../simq/" aria-current="page">simq</a></li>
+        <li class="docs-link"><a href="../docs/">Docs</a></li>
+        </ul>
+      </nav>
+      <button class="theme-btn" type="button" hidden>Dark theme</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero tool-hero">
+      <div class="wrap hero-grid">
+        <div class="hero-text">
+          <h1>simq</h1>
+          <p class="lede">A queue for iOS simulator tests. Any number of sessions submit a test run; an always-on harness runs them one per simulator, with warm DerivedData, and hands back the result.</p>
+          <p class="status-line"><span class="badge" data-status="simq">Not public yet</span> <a href="../docs/simq/">Read the documentation</a> <a data-repo="simq" href="#" hidden>Source on GitHub</a></p>
+        </div>
+        <figure class="hero-figure">
+    <svg viewBox="0 0 480 478" role="img" aria-labelledby="loop-t loop-d">
+      <title id="loop-t">How simq runs a test job</title>
+      <desc id="loop-d">People, scripts and agents submit test runs to the simq broker, which keeps the queue on disk and hands jobs out as leases. One worker per simulator claims a job, builds into shared per-project DerivedData only when the source changed, runs the tests on its own simulator and reports the result back.</desc>
+      <path class="d-flow" d="M60.0 60.0 L60.0 83.0 Q60.0 95.0 72.0 95.0 L150.0 95.0"/>
+      <path class="d-flow" d="M240.0 60.0 L240.0 83.0 Q240.0 95.0 228.0 95.0 L150.0 95.0"/>
+      <path class="d-flow" d="M150.0 60.0 L150.0 123.0"/>
+      <path class="d-pulse" d="M150.0 60.0 L150.0 123.0"/>
+      <path class="d-flow" d="M110.0 190.0 L110.0 218.0 Q110.0 230.0 98.0 230.0 L92.0 230.0 Q80.0 230.0 80.0 242.0 L80.0 263.0"/>
+      <path class="d-pulse" d="M110.0 190.0 L110.0 218.0 Q110.0 230.0 98.0 230.0 L92.0 230.0 Q80.0 230.0 80.0 242.0 L80.0 263.0"/>
+      <path class="d-flow" d="M190.0 190.0 L190.0 218.0 Q190.0 230.0 202.0 230.0 L208.0 230.0 Q220.0 230.0 220.0 242.0 L220.0 263.0"/>
+      <path class="d-pulse" d="M190.0 190.0 L190.0 218.0 Q190.0 230.0 202.0 230.0 L208.0 230.0 Q220.0 230.0 220.0 242.0 L220.0 263.0"/>
+      <path class="d-flow" d="M280.0 295.0 L329.0 295.0"/>
+      <path class="d-pulse" d="M280.0 295.0 L329.0 295.0"/>
+      <path class="d-flow" d="M80.0 320.0 L80.0 363.0"/>
+      <path class="d-pulse" d="M80.0 320.0 L80.0 363.0"/>
+      <path class="d-flow" d="M220.0 320.0 L220.0 363.0"/>
+      <path class="d-pulse" d="M220.0 320.0 L220.0 363.0"/>
+      <path class="d-flow" d="M250.0 160.0 L398.0 160.0 Q410.0 160.0 410.0 148.0 L410.0 52.0 Q410.0 40.0 398.0 40.0 L289.0 40.0"/>
+      <path class="d-pulse" d="M250.0 160.0 L398.0 160.0 Q410.0 160.0 410.0 148.0 L410.0 52.0 Q410.0 40.0 398.0 40.0 L289.0 40.0"/>
+      <rect class="d-plate" x="18" y="20" width="84" height="40" rx="7"/>
+      <text class="d-t" x="60.0" y="45.5" text-anchor="middle">person</text>
+      <rect class="d-plate" x="108" y="20" width="84" height="40" rx="7"/>
+      <text class="d-t" x="150.0" y="45.5" text-anchor="middle">script</text>
+      <rect class="d-plate" x="198" y="20" width="84" height="40" rx="7"/>
+      <text class="d-t" x="240.0" y="45.5" text-anchor="middle">agent</text>
+      <rect class="d-fill" x="50" y="130" width="200" height="60" rx="7"/>
+      <text class="d-t is-on" x="150.0" y="157.0" text-anchor="middle">simq broker</text>
+      <text class="d-s is-on" x="150.0" y="175.0" text-anchor="middle">queue on disk, leases</text>
+      <rect class="d-plate" x="20" y="270" width="120" height="50" rx="7"/>
+      <text class="d-t" x="80.0" y="300.5" text-anchor="middle">worker 1</text>
+      <rect class="d-plate" x="160" y="270" width="120" height="50" rx="7"/>
+      <text class="d-t" x="220.0" y="300.5" text-anchor="middle">worker 2</text>
+      <rect class="d-plate" x="336" y="262" width="136" height="66" rx="7"/>
+      <text class="d-t" x="404.0" y="292.0" text-anchor="middle">DerivedData</text>
+      <text class="d-s" x="404.0" y="310.0" text-anchor="middle">one build at a time</text>
+      <rect class="d-plate" x="50" y="370" width="60" height="96" rx="11"/>
+      <path class="d-line" d="M72 380 h16"/>
+      <text class="d-m" x="80" y="424" text-anchor="middle">simq-1</text>
+      <rect class="d-plate" x="190" y="370" width="60" height="96" rx="11"/>
+      <path class="d-line" d="M212 380 h16"/>
+      <text class="d-m" x="220" y="424" text-anchor="middle">simq-2</text>
+      <path class="d-head" d="M150.0 130.0 L143.5 117.0 L156.5 117.0 Z"/>
+      <path class="d-head" d="M80.0 270.0 L73.5 257.0 L86.5 257.0 Z"/>
+      <path class="d-head" d="M220.0 270.0 L213.5 257.0 L226.5 257.0 Z"/>
+      <path class="d-head" d="M336.0 295.0 L323.0 301.5 L323.0 288.5 Z"/>
+      <path class="d-head" d="M80.0 370.0 L73.5 357.0 L86.5 357.0 Z"/>
+      <path class="d-head" d="M220.0 370.0 L213.5 357.0 L226.5 357.0 Z"/>
+      <path class="d-head" d="M282.0 40.0 L295.0 33.5 L295.0 46.5 Z"/>
+      <g class="d-num"><circle cx="150" cy="108" r="11.5"/><text x="150" y="112.6" text-anchor="middle">1</text></g>
+      <g class="d-num"><circle cx="110" cy="214" r="11.5"/><text x="110" y="218.6" text-anchor="middle">2</text></g>
+      <g class="d-num"><circle cx="306" cy="295" r="11.5"/><text x="306" y="299.6" text-anchor="middle">3</text></g>
+      <g class="d-num"><circle cx="80" cy="344" r="11.5"/><text x="80" y="348.6" text-anchor="middle">4</text></g>
+      <g class="d-num"><circle cx="410" cy="100" r="11.5"/><text x="410" y="104.6" text-anchor="middle">5</text></g>
+    </svg>
+        </figure>
+        <aside class="plate" aria-label="Facts about simq">
+          <dl>
+            <dt>Runs on</dt><dd>macOS with Xcode (tested with 26.6) and at least one iOS simulator runtime.</dd>
+            <dt>Built as</dt><dd>A broker and workers kept running by launchd, and the <code>simq</code> CLI.</dd>
+            <dt>Claude Code</dt><dd>A plugin: a skill, <code>/simq-status</code> and <code>/simq-setup</code>.</dd>
+            <dt>Future</dt><dd>Being folded into daleq's iOS plugin, which reads the same <code>.simq.toml</code>.</dd>
+            <dt>Licence</dt><dd>Apache-2.0</dd>
+            <dt>Status</dt><dd><span class="badge" data-status="simq">Not public yet</span></dd>
+          </dl>
+        </aside>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="how">
+      <div class="wrap">
+        <h2 id="how">How it works</h2>
+        <ol class="steps">
+          <li>A person, a script or a Claude Code agent submits a run with <code>simq submit --wait</code>.</li>
+          <li>The broker owns the queue on disk and hands jobs out as leases. It re-queues a job when its worker stops heart-beating and gives up after 3 attempts.</li>
+          <li>A worker claims the job and builds into a DerivedData directory per project. The build is skipped when the source fingerprint, Xcode build and settings are unchanged since the last build.</li>
+          <li>The worker runs the tests on its own simulator, with per-test timeouts on, so a hanging test fails instead of hanging the run.</li>
+          <li>The result comes back: pass and fail counts, failing tests with messages, timings, artifact paths, and an exit code.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="problem">
+      <div class="wrap split">
+        <h2 id="problem">The problem</h2>
+        <div class="prose">
+          <p>Several sessions on one Mac all want to run the iOS tests. Each one runs a cold <code>xcodebuild build test</code>, waits behind a lock, or fights the others over a simulator.</p>
+          <p>On the larger app measured in simq's README, <code>build-for-testing</code> with an empty DerivedData took 307 seconds. A fresh checkout pays that every time.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="does">
+      <div class="wrap split">
+        <h2 id="does">What it does</h2>
+        <div class="prose">
+          <ul>
+            <li><strong>One queue for everyone</strong>: clients only talk to the broker, over a Unix socket.</li>
+            <li><strong>One worker per simulator.</strong> Parallelism comes from the pool, not from xcodebuild's parallel testing.</li>
+            <li><strong>Build skipping</strong>: an unchanged tree goes straight to testing, and a small change rebuilds incrementally.</li>
+            <li><strong>Self-healing</strong>: wall-clock timeouts for build and tests, a retry after rebooting the simulator, and booting that escalates from reboot to erase to a fresh clone.</li>
+            <li><strong>Sharding</strong> with <code>--shards N</code>: test classes are dealt over several workers and the results merged into one.</li>
+            <li><strong>Results as data</strong>: <code>simq submit --wait --json</code> prints the job and the result as JSON.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="edge">
+      <div class="wrap split">
+        <h2 id="edge">The edge</h2>
+        <div class="prose">
+          <p>Nothing found combines a local queue, a self-healing pool with one worker per simulator, a fingerprint build-skip, sharding and xcresult summaries. Measured on an Apple Silicon MacBook Air with Xcode 26.6:</p>
+          <div class="table-scroll" tabindex="0" role="group" aria-label="Table: Step / Small app, 5 tests / Large app, 417 tests">
+            <table class="cols-many">
+              <thead><tr><th scope="col">Step</th><th scope="col">Small app, 5 tests</th><th scope="col">Large app, 417 tests</th></tr></thead>
+              <tbody>
+              <tr><td data-label="Step"><code>build-for-testing</code>, empty DerivedData</td><td data-label="Small app, 5 tests">9s</td><td data-label="Large app, 417 tests">307s</td></tr>
+              <tr><td data-label="Step"><code>build-for-testing</code>, warm, nothing changed</td><td data-label="Small app, 5 tests">2s</td><td data-label="Large app, 417 tests">42s; simq skips this entirely</td></tr>
+              <tr><td data-label="Step"><code>test-without-building</code>, unit bundle only</td><td data-label="Small app, 5 tests">13s</td><td data-label="Large app, 417 tests">40s</td></tr>
+              <tr><td data-label="Step"><code>test-without-building</code>, everything</td><td data-label="Small app, 5 tests">76s</td><td data-label="Large app, 417 tests">869s</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Only <code>simq-*</code> simulators are ever booted, erased, cloned or deleted.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="compare">
+      <div class="wrap split">
+        <h2 id="compare">How it compares</h2>
+        <div class="prose">
+          <p>simq is being folded into daleq. daleq's iOS plugin reads the same <code>.simq.toml</code> and adds iPad and Apple Watch pools, leases for hands-on work and progress counts. For a new setup, look at daleq first.</p>
+          <p>Sharding and snapshot mode are documented for simq. Whether daleq's plugin matches them has not been checked here.</p>
+          <h3>When not to use it</h3>
+          <ul>
+            <li>You want an agent to build, run, debug and drive an app's UI. XcodeBuildMCP is the default choice for that; simq is the part it leaves out, a queue and a simulator pool.</li>
+            <li>You want to tap and type in a simulator. simq runs XCTest; it does not drive UI.</li>
+            <li>One session, one simulator. Plain <code>xcodebuild</code> is enough.</li>
+            <li>Several Macs. Multi-machine is not built in simq.</li>
+          </ul>
+          <p class="small">Compared on 2026-11-19 from each tool's public page. Other tools change; check before you choose.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="install">
+      <div class="wrap split">
+        <h2 id="install">Install</h2>
+        <div class="prose">
+          <p class="private-note" data-private="simq"><strong>Not public yet.</strong> The repository is private today. These are the commands as they will be once it is public.</p>
+          <div class="cmd"><pre><code>/plugin marketplace add mr-wheelkers/simq
+/plugin install simq@simq
+/simq-setup</code></pre></div>
+          <p><code>/simq-setup</code> covers install, update, doctor and uninstall. Without the plugin, run the installer in a checkout:</p>
+          <div class="cmd"><pre><code>scripts/install.sh<span class="k">                 # or: scripts/install.sh --workers 3 --model "iPhone 17" --runtime 26.5</span></code></pre></div>
+          <p>The first start takes a few minutes: the workers create <code>simq-golden</code>, boot it once, and clone <code>simq-1…N</code> from it.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="quick-start">
+      <div class="wrap split">
+        <h2 id="quick-start">Quick start</h2>
+        <div class="prose">
+          <figure class="term">
+            <figcaption class="bar"><span>from an iOS project</span></figcaption>
+            <pre><code><span class="c">simq submit --wait</span>
+<span class="k"># all tests of the project in the current directory</span>
+<span class="c">simq submit --wait --only AppTests/ParserTests --only AppUITests/LoginTests/testLogin</span>
+<span class="c">simq submit --wait --shards 2</span>
+<span class="k"># split by test class over 2 workers, one merged result</span>
+<span class="c">simq status [ID]</span>
+<span class="k"># workers, queue, recent results / one job</span></code></pre>
+          </figure>
+          <p>Exit codes of <code>submit --wait</code>: 0 passed, 1 tests failed, 2 build failed, 3 timeout, 4 infrastructure error, 5 cancelled, 64 usage.</p>
+          <p>The <a href="../docs/simq/">simq documentation</a> has the concepts, every command, the Claude Code integration, security and troubleshooting.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>
+        <p>Local tools for working with Claude Code, by Sviatoslav Kolesnyk (<a href="https://github.com/mr-wheelkers">mr-wheelkers</a> on GitHub).</p>
+        <p>Every tool is licensed under Apache-2.0.</p>
+        <p class="small">These are independent tools. Claude Code is a product of Anthropic.</p>
+      </div>
+      <nav aria-label="Tools">
+        <p><strong>Tools</strong></p>
+        <ul><li><a href="../daleq/">daleq</a></li><li><a href="../drawingboard/">drawingboard</a></li><li><a href="../imgcompare/">imgcompare</a></li><li><a href="../godot-pilot/">godot-pilot</a></li><li><a href="../simq/">simq</a></li></ul>
+      </nav>
+      <nav aria-label="Documentation">
+        <p><strong>Documentation</strong></p>
+        <ul><li><a href="../docs/daleq/">daleq</a></li><li><a href="../docs/drawingboard/">drawingboard</a></li><li><a href="../docs/imgcompare/">imgcompare</a></li><li><a href="../docs/godot-pilot/">godot-pilot</a></li><li><a href="../docs/simq/">simq</a></li></ul>
+      </nav>
+    </div>
+  </footer>
+  <script src="../assets/tools.js"></script>
+  <script src="../assets/site.js"></script>
+</body>
+</html>

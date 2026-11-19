@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>daleq: a job daemon for coding agents</title>
+  <meta name="description" content="daleq runs a coding agent&#x27;s long commands under watchdogs and keeps every result on disk.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect x='1.0' y='5' width='5' height='24' fill='%23F2B416'/%3E%3Crect x='7.6' y='5' width='5' height='24' fill='%232B66D9'/%3E%3Crect x='14.2' y='5' width='5' height='24' fill='%23C92A74'/%3E%3Crect x='20.8' y='5' width='5' height='24' fill='%230B7A6F'/%3E%3Crect x='27.4' y='5' width='5' height='24' fill='%23E8692F'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body data-tool="daleq">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="../"><svg class="rack" viewBox="0 0 34 22" aria-hidden="true" focusable="false"><rect x="1.0" y="1" width="5" height="20" fill="#F2B416"/><rect x="7.6" y="12" width="5" height="9" fill="#2B66D9"/><rect x="14.2" y="12" width="5" height="9" fill="#C92A74"/><rect x="20.8" y="12" width="5" height="9" fill="#0B7A6F"/><rect x="27.4" y="12" width="5" height="9" fill="#E8692F"/></svg><span>mr-wheelkers tools</span></a>
+      <nav class="site-nav" aria-label="Site">
+        <ul>
+        <li data-tool="daleq"><a href="../daleq/" aria-current="page">daleq</a></li>
+        <li data-tool="drawingboard"><a href="../drawingboard/">drawingboard</a></li>
+        <li data-tool="imgcompare"><a href="../imgcompare/">imgcompare</a></li>
+        <li data-tool="godot-pilot"><a href="../godot-pilot/">godot-pilot</a></li>
+        <li data-tool="simq"><a href="../simq/">simq</a></li>
+        <li class="docs-link"><a href="../docs/">Docs</a></li>
+        </ul>
+      </nav>
+      <button class="theme-btn" type="button" hidden>Dark theme</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero tool-hero">
+      <div class="wrap hero-grid">
+        <div class="hero-text">
+          <h1>daleq</h1>
+          <p class="lede">A small local daemon that runs long commands for a coding agent. It hands back a job id at once, runs the command under watchdogs, and keeps every output and outcome on disk.</p>
+          <p class="status-line"><span class="badge" data-status="daleq">Not public yet</span> <a href="../docs/daleq/">Read the documentation</a> <a data-repo="daleq" href="#" hidden>Source on GitHub</a></p>
+        </div>
+        <figure class="hero-figure">
+    <svg viewBox="0 0 480 424" role="img" aria-labelledby="loop-t loop-d">
+      <title id="loop-t">The daleq loop: submit, watchdogs, a result kept on disk</title>
+      <desc id="loop-d">Claude Code submits a command to the daleq daemon and gets a job id at once. The daemon starts one detached supervisor per job. The supervisor runs the command in its own process group under watchdogs and writes output and outcome to the job&#x27;s folder on disk. Claude Code waits in bounded steps and finds the result there, also after a pause.</desc>
+      <path class="d-flow" d="M200.0 52.0 L273.0 52.0"/>
+      <path class="d-pulse" d="M200.0 52.0 L273.0 52.0"/>
+      <path class="d-flow" d="M370.0 80.0 L370.0 163.0"/>
+      <path class="d-pulse" d="M370.0 80.0 L370.0 163.0"/>
+      <path class="d-flow" d="M370.0 226.0 L370.0 283.0"/>
+      <path class="d-pulse" d="M370.0 226.0 L370.0 283.0"/>
+      <path class="d-flow" d="M280.0 198.0 L142.0 198.0 Q130.0 198.0 130.0 210.0 L130.0 283.0"/>
+      <path class="d-pulse" d="M280.0 198.0 L142.0 198.0 Q130.0 198.0 130.0 210.0 L130.0 283.0"/>
+      <path class="d-flow" d="M60.0 290.0 L60.0 87.0"/>
+      <path class="d-pulse" d="M60.0 290.0 L60.0 87.0"/>
+      <rect class="d-plate" x="20" y="24" width="180" height="56" rx="7"/>
+      <text class="d-t" x="110.0" y="57.5" text-anchor="middle">Claude Code</text>
+      <rect class="d-fill" x="280" y="24" width="180" height="56" rx="7"/>
+      <text class="d-t is-on" x="370.0" y="49.0" text-anchor="middle">daleq daemon</text>
+      <text class="d-s is-on" x="370.0" y="67.0" text-anchor="middle">queue, pools, locks</text>
+      <rect class="d-plate" x="280" y="170" width="180" height="56" rx="7"/>
+      <text class="d-t" x="370.0" y="195.0" text-anchor="middle">supervisor</text>
+      <text class="d-s" x="370.0" y="213.0" text-anchor="middle">one per job, detached</text>
+      <rect class="d-bound" x="268" y="290" width="204" height="110" rx="10"/>
+      <text class="d-s is-muted" x="370" y="311" text-anchor="middle">its own process group</text>
+      <rect class="d-plate" x="290" y="322" width="160" height="56" rx="7"/>
+      <text class="d-t" x="370.0" y="355.5" text-anchor="middle">your command</text>
+      <rect class="d-plate" x="20" y="290" width="180" height="110" rx="7"/>
+      <text class="d-t" x="36" y="316" text-anchor="start">jobs/&lt;id&gt;/</text>
+      <text class="d-m" x="36" y="340" text-anchor="start">job.json</text>
+      <text class="d-m" x="36" y="359" text-anchor="start">status.json</text>
+      <text class="d-m" x="36" y="378" text-anchor="start">output.log</text>
+      <text class="d-s" x="388" y="260" text-anchor="start">watchdogs</text>
+      <path class="d-head" d="M280.0 52.0 L267.0 58.5 L267.0 45.5 Z"/>
+      <path class="d-head" d="M370.0 170.0 L363.5 157.0 L376.5 157.0 Z"/>
+      <path class="d-head" d="M370.0 290.0 L363.5 277.0 L376.5 277.0 Z"/>
+      <path class="d-head" d="M130.0 290.0 L123.5 277.0 L136.5 277.0 Z"/>
+      <path class="d-head" d="M60.0 80.0 L66.5 93.0 L53.5 93.0 Z"/>
+      <g class="d-num"><circle cx="238" cy="52" r="11.5"/><text x="238" y="56.6" text-anchor="middle">1</text></g>
+      <g class="d-num"><circle cx="370" cy="122" r="11.5"/><text x="370" y="126.6" text-anchor="middle">2</text></g>
+      <g class="d-num"><circle cx="370" cy="255" r="11.5"/><text x="370" y="259.6" text-anchor="middle">3</text></g>
+      <g class="d-num"><circle cx="200" cy="198" r="11.5"/><text x="200" y="202.6" text-anchor="middle">4</text></g>
+      <g class="d-num"><circle cx="60" cy="180" r="11.5"/><text x="60" y="184.6" text-anchor="middle">5</text></g>
+    </svg>
+        </figure>
+        <aside class="plate" aria-label="Facts about daleq">
+          <dl>
+            <dt>Runs on</dt><dd>macOS and Linux. Windows is experimental.</dd>
+            <dt>Built as</dt><dd>One Go binary: daemon, CLI and MCP server.</dd>
+            <dt>Claude Code</dt><dd>A plugin: MCP tools, a hook, a skill, <code>/daleq-status</code>.</dd>
+            <dt>Network</dt><dd>None, except between machines you join into a cluster yourself.</dd>
+            <dt>Licence</dt><dd>Apache-2.0</dd>
+            <dt>Status</dt><dd><span class="badge" data-status="daleq">Not public yet</span></dd>
+          </dl>
+        </aside>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="how">
+      <div class="wrap">
+        <h2 id="how">How it works</h2>
+        <ol class="steps">
+          <li>Claude Code submits a command with <code>daleq_submit</code> (or <code>daleq submit</code> from a shell) and gets a job id back at once.</li>
+          <li>The daemon queues the job and starts a supervisor for it. The supervisor runs detached, so restarting or crashing the daemon never kills a job.</li>
+          <li>The supervisor runs the command in its own process group under watchdogs: a wall-clock limit, a no-output limit, <code>fail_on</code> and <code>ready_on</code>. A kill takes the whole process tree.</li>
+          <li>Everything about the job lives in <code>jobs/&lt;id&gt;/</code>: <code>job.json</code>, <code>status.json</code> and <code>output.log</code>.</li>
+          <li>The agent waits in bounded steps (<code>daleq_wait</code> blocks at most 120 s per call) and reads the result. After a pause, the same submit attaches to the finished job instead of running it again.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="problem">
+      <div class="wrap split">
+        <h2 id="problem">The problem</h2>
+        <div class="prose">
+          <p>Coding agents hang on long commands. A build, a test suite or a dev server ties up the session. A rate-limit pause or a crash loses the result. A process that never ends blocks the agent for good.</p>
+          <p>The usual answers are a background task that dies with the session, or a <code>sleep</code> loop that polls and burns turns.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="does">
+      <div class="wrap split">
+        <h2 id="does">What it does</h2>
+        <div class="prose">
+          <ul>
+            <li><strong>MCP tools</strong> for Claude Code: <code>daleq_submit</code>, <code>daleq_wait</code>, <code>daleq_status</code>, <code>daleq_logs</code> (with grep), <code>daleq_cancel</code>, <code>daleq_list</code> and <code>daleq_fetch</code>.</li>
+            <li><strong>Watchdogs</strong>: a wall-clock limit (30 minutes by default), a no-output limit (10 minutes means hung), a regex that fails a job early, and a regex that marks a server ready.</li>
+            <li><strong>Results that survive</strong>: every job's output and outcome stay on disk for 7 days. Resubmitting the same command on an unchanged tree reuses the earlier result.</li>
+            <li><strong>A hook</strong> that turns away Bash and PowerShell commands that never end or only wait (dev servers, <code>tail -f</code>, watch modes, polling loops) and points the agent to daleq.</li>
+            <li><strong>A CLI and a live panel</strong> for people: <code>daleq submit --wait -- go test ./...</code> and <code>daleq top</code>.</li>
+            <li><strong>Device pools</strong>: iPhone, iPad and Apple Watch simulators, or your own list of devices, leased to jobs and healed before reuse.</li>
+            <li><strong>Several machines</strong>: one queue can span a Mac, a Linux box and a Windows PC over mutual TLS.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="edge">
+      <div class="wrap split">
+        <h2 id="edge">The edge</h2>
+        <div class="prose">
+          <p>Four things were found nowhere else together.</p>
+          <ol>
+            <li><strong>Durable results.</strong> A daleq job and its log outlive a session exit, a rate-limit pause and a crash.</li>
+            <li><strong>Watchdogs on silence and on output patterns.</strong> A job that prints nothing for 10 minutes is killed as hung; <code>fail_on</code> ends one early on a known fatal line.</li>
+            <li><strong>Result reuse without a build graph.</strong> The same command on the same tree is not run twice, and nothing has to be declared first.</li>
+            <li><strong>An enforcing hook</strong> that understands shell structure: quoted strings, heredoc bodies and comments are text, so a commit message that mentions <code>sleep 5</code> passes.</li>
+          </ol>
+          <p>Device pools with healing and leases add a fifth for mobile work.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="compare">
+      <div class="wrap split">
+        <h2 id="compare">How it compares</h2>
+        <div class="prose">
+          <p>Running a command in the background and reading its logs later is no reason to install anything. Claude Code does that natively, with no install, and its background tasks obey your Bash permission rules and sandbox. They are cleaned up when Claude Code exits; that is where daleq differs.</p>
+          <h3>When not to use it</h3>
+          <ul>
+            <li>You only need a background run inside one session. Use Claude Code's own background tasks.</li>
+            <li>Several agents only need one build at a time. block/agent-task-queue covers that with far less code.</li>
+            <li>You run declared, long-lived services. pitchfork and process-compose have ready checks by HTTP, TCP or command; daleq's is an output regex.</li>
+            <li>Your tasks are already modelled in Turborepo, Nx or Bazel. Those hash inputs per task and restore output files; daleq fingerprints the whole git tree.</li>
+            <li>You rely on Claude Code's Bash allow rules or sandbox. Commands sent through daleq are not checked by them: daleq refuses only what matches your <code>Bash(…)</code> deny rules.</li>
+            <li>You are on Windows and need it to be boring. Windows support is experimental.</li>
+          </ul>
+          <p>The cluster layer (several machines, mutual TLS, snapshots) is a large surface for a tool with one maintainer. The single-machine daemon is the core.</p>
+          <p class="small">Compared on 2026-11-19 from each tool's public page. Other tools change; check before you choose.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="install">
+      <div class="wrap split">
+        <h2 id="install">Install</h2>
+        <div class="prose">
+          <p class="private-note" data-private="daleq"><strong>Not public yet.</strong> The repository is private today. These are the commands as they will be once it is public.</p>
+          <div class="cmd"><pre><code>/plugin marketplace add mr-wheelkers/daleq
+/plugin install daleq@daleq
+/daleq-setup</code></pre></div>
+          <p><code>/daleq-setup</code> downloads the prebuilt <code>daleq</code> binary for your machine from the latest GitHub release, checks it against the release's checksums and installs it to <code>~/.local/bin</code>. Then restart Claude Code so the MCP server starts.</p>
+          <p>To prepare a project so that everyone who opens it in Claude Code uses daleq, run <code>daleq init</code> in its folder.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="quick-start">
+      <div class="wrap split">
+        <h2 id="quick-start">Quick start</h2>
+        <div class="prose">
+          <p>Ask the agent in plain words; the skill and the hook steer it to daleq.</p>
+          <ul>
+            <li>"Run the full test suite and tell me what failed." The agent submits it, waits in bounded steps, and reads the first failure lines daleq highlights.</li>
+            <li>"Start the dev server and check the home page loads." The agent submits it as an <code>io</code> job with <code>ready_on: "listening on"</code>, waits until it is ready, checks the page, and cancels it when done.</li>
+            <li>"Build the release, I'll be back in an hour." After the break, the same submit attaches to the finished job instead of building again.</li>
+          </ul>
+          <p>From a shell, without MCP:</p>
+          <figure class="term">
+            <figcaption class="bar"><span>daleq from a shell</span></figcaption>
+            <pre><code><span class="c">daleq submit --wait -q -- npm test</span>
+<span class="k"># foreground; hands back after 9 min max; -q = state + last lines</span>
+<span class="c">daleq wait ID</span>
+<span class="k"># exit 6 = still running: run it again</span>
+<span class="c">daleq logs ID --tail 100</span>
+<span class="c">daleq cancel ID</span></code></pre>
+          </figure>
+          <p>A reused result says so on stdout:</p>
+          <figure class="term">
+            <figcaption class="bar"><span>the same submit, on an unchanged tree</span></figcaption>
+            <pre><code><span class="c">daleq submit --wait -q -- npm test</span>
+<span class="o">REUSED: … --force runs it again</span></code></pre>
+          </figure>
+          <p>The <a href="../docs/daleq/">daleq documentation</a> has the concepts, every command, the Claude Code integration, security and troubleshooting.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>
+        <p>Local tools for working with Claude Code, by Sviatoslav Kolesnyk (<a href="https://github.com/mr-wheelkers">mr-wheelkers</a> on GitHub).</p>
+        <p>Every tool is licensed under Apache-2.0.</p>
+        <p class="small">These are independent tools. Claude Code is a product of Anthropic.</p>
+      </div>
+      <nav aria-label="Tools">
+        <p><strong>Tools</strong></p>
+        <ul><li><a href="../daleq/">daleq</a></li><li><a href="../drawingboard/">drawingboard</a></li><li><a href="../imgcompare/">imgcompare</a></li><li><a href="../godot-pilot/">godot-pilot</a></li><li><a href="../simq/">simq</a></li></ul>
+      </nav>
+      <nav aria-label="Documentation">
+        <p><strong>Documentation</strong></p>
+        <ul><li><a href="../docs/daleq/">daleq</a></li><li><a href="../docs/drawingboard/">drawingboard</a></li><li><a href="../docs/imgcompare/">imgcompare</a></li><li><a href="../docs/godot-pilot/">godot-pilot</a></li><li><a href="../docs/simq/">simq</a></li></ul>
+      </nav>
+    </div>
+  </footer>
+  <script src="../assets/tools.js"></script>
+  <script src="../assets/site.js"></script>
+</body>
+</html>
